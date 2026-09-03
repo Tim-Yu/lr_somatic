@@ -148,6 +148,7 @@ For structural variants, the CHM13 panel of normals is a merged panel combining 
 | `--skip_wakhan`        | A boolean to skip `wakhan`. Default = `false`                                                                                                                                        |
 | `--skip_savana`        | A boolean to skip `savana` SV and copy number calling. Default = `false`                                                                                                             |
 | `--skip_padfoot`       | A boolean to skip `padfoot` SV/CNA annotation. Default = `false`                                                                                                                     |
+| `--skip_reconplot`     | A boolean to skip `reconplot` SV/CNA figures. Default = `false`                                                                                                                      |
 | `--skip_vep`           | A boolean to skip `vep`. Default = `false`                                                                                                                                           |
 | `--skip_m6a`           | A boolean to skip `fibertools_m6a`, used if you have m6a calls but would still like nucleosome positions for PacBio data (ONT data is required to have m6a calls). Default = `false` |
 | `--skip_nanoplot`      | A boolean to skip NanoPlot QC on aligned and unaligned BAM files. Default = `false`                                                                                                  |
@@ -252,6 +253,32 @@ Padfoot bundles gene and repeat annotations for `hg38` and `mm10` only. For othe
 | `--padfoot_rm`               | Custom RepeatMasker annotation. Default = `null` (bundled)                                                                                                                    |
 | `--padfoot_run_repeatmasker` | Run RepeatMasker on inserted sequences (repeat class of novel insertions). Containers use `--padfoot_repeatmasker_container` (full Dfam 4.0); conda uses the curated Dfam subset bundled with bioconda RepeatMasker. Default = `true` |
 | `--padfoot_repeatmasker_container` | Digest-pinned image with Padfoot dependencies + RepeatMasker 4.2.4 + Dfam 4.0. Default = `ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d35...` |
+#### ReConPlot Options
+
+[ReConPlot](https://github.com/cortes-ciriano-lab/ReConPlot) rearrangement + copy-number figures are generated through the [Tim-Yu/ReConPlot](https://github.com/Tim-Yu/ReConPlot) wrapper for every CN/SV caller pair available for a sample, into `reconplot/<pair>/`:
+
+- `ascat_severus/` -- ASCAT allele-specific CN + Severus somatic SVs
+- `wakhan_severus/` -- Wakhan top-ranked solution CN + Severus somatic SVs
+- `savana/` -- SAVANA absolute CN + SAVANA classified somatic SVs
+
+Each pair produces `per_chromosome/` (one figure per chromosome), `genome_wide/` (all chromosomes in one strip), the harmonised CN/SV tables, and, when `--reconplot_regions` is set, a `focus/` multi-panel figure with optional gene labels and BAF track. Both the wrapper and the ReConPlot R package (neither on conda) are staged as source from GitHub (or local checkouts for offline systems); the default container ships the package pre-installed, while `-profile conda` installs it at run time.
+
+| Parameter                 | Description                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `--reconplot_url`         | Wrapper source tarball (GitHub archive). Default = pinned commit of `Tim-Yu/ReConPlot`                                          |
+| `--reconplot_dir`         | Local wrapper checkout (contains `run_reconplot.R`); overrides `--reconplot_url`. Default = `null`                              |
+| `--reconplot_pkg_url`     | ReConPlot R package source tarball. Default = pinned commit of `cortes-ciriano-lab/ReConPlot`                                    |
+| `--reconplot_pkg_dir`     | Local ReConPlot package checkout; overrides `--reconplot_pkg_url`. Default = `null`                                              |
+| `--reconplot_container`   | Digest-pinned image with R deps + ReConPlot (built from `containers/reconplot/Dockerfile`). Default = `ghcr.io/tim-yu/reconplot` |
+| `--reconplot_genome`      | ReConPlot genome preset (`hg38`, `hg19`, `T2T`, `mm10`, `mm39`). Default = `null` (inferred from `--genome`)                      |
+| `--reconplot_max_cn`      | Copy-number axis ceiling. Default = `8`                                                                                          |
+| `--reconplot_min_svlen`   | Drop intra-chromosomal SVs shorter than this (bp); translocations kept. Default = `0`                                            |
+| `--reconplot_exclude_vntr`| Drop Severus SVs flagged inside a VNTR. Default = `false`                                                                        |
+| `--reconplot_regions`     | Regions for an extra `focus/` panel, e.g. `"chr8,chr17:30000000-50000000"`. Default = `null` (no focus panel)                    |
+| `--reconplot_genes`       | Comma-separated HUGO symbols labelled on the focus panel. Default = `null`                                                       |
+| `--reconplot_baf_track`   | Add a het-SNP BAF track to the focus panel (ASCAT and SAVANA only). Default = `false`                                            |
+| `--reconplot_format`      | Output formats: `pdf`, `png` or `pdf,png`. Default = `pdf,png`                                                                   |
+
 #### Variant Filtering and Combining Options
 
 These options control how variants from multiple callers are filtered and merged.

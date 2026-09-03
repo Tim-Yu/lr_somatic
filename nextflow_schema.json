@@ -313,6 +313,77 @@
                 }
             }
         },
+        "reconplot_options": {
+            "title": "ReConPlot options",
+            "type": "object",
+            "description": "Options for ReConPlot rearrangement/copy-number figures",
+            "default": "",
+            "properties": {
+                "reconplot_url": {
+                    "type": "string",
+                    "default": "https://github.com/Tim-Yu/ReConPlot/archive/2672ccb22fc979909e136f6d2614b5fb763d1de2.tar.gz",
+                    "description": "URL of the ReConPlot wrapper source tarball (GitHub archive of Tim-Yu/ReConPlot)."
+                },
+                "reconplot_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Local checkout of the ReConPlot wrapper (contains run_reconplot.R). Overrides --reconplot_url."
+                },
+                "reconplot_pkg_url": {
+                    "type": "string",
+                    "default": "https://github.com/cortes-ciriano-lab/ReConPlot/archive/88bb76011703d7908aaa2e5bdecfe18ba5737db8.tar.gz",
+                    "description": "URL of the ReConPlot R package source (installed at run time when the environment lacks it, i.e. under conda)."
+                },
+                "reconplot_pkg_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Local checkout of the ReConPlot R package. Overrides --reconplot_pkg_url."
+                },
+                "reconplot_container": {
+                    "type": "string",
+                    "default": "ghcr.io/tim-yu/reconplot:0.2-r4.4",
+                    "description": "Docker/Singularity image with R, the wrapper dependencies and the ReConPlot package. Build recipe: containers/reconplot/Dockerfile"
+                },
+                "reconplot_genome": {
+                    "type": "string",
+                    "enum": ["hg38", "hg19", "T2T", "mm10", "mm39"],
+                    "description": "ReConPlot genome build for gene/chromosome annotations. Default: inferred from --genome (GRCh38 -> hg38, CHM13 -> T2T)."
+                },
+                "reconplot_max_cn": {
+                    "type": "integer",
+                    "default": 8,
+                    "description": "Copy number axis ceiling"
+                },
+                "reconplot_min_svlen": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Drop intra-chromosomal SVs shorter than this many bp (translocations are kept). 0 keeps everything."
+                },
+                "reconplot_exclude_vntr": {
+                    "type": "boolean",
+                    "description": "Drop Severus SVs flagged as inside a VNTR"
+                },
+                "reconplot_regions": {
+                    "type": "string",
+                    "description": "Comma-separated regions (e.g. 'chr8,chr17:30000000-50000000') for an additional multi-panel focus figure"
+                },
+                "reconplot_genes": {
+                    "type": "string",
+                    "description": "Comma-separated HUGO gene symbols to label on the focus figure"
+                },
+                "reconplot_baf_track": {
+                    "type": "boolean",
+                    "description": "Add a het-SNP BAF track to the focus figure (ASCAT and SAVANA copy number only)"
+                },
+                "reconplot_format": {
+                    "type": "string",
+                    "default": "pdf,png",
+                    "description": "Comma-separated output formats: pdf, png"
+                }
+            }
+        },
         "ascat_parameters": {
             "title": "ASCAT parameters",
             "type": "object",
@@ -419,6 +490,10 @@
                 "skip_padfoot": {
                     "type": "boolean",
                     "description": "Skips Padfoot SV/CNA annotation"
+                },
+                "skip_reconplot": {
+                    "type": "boolean",
+                    "description": "Skips ReConPlot SV/CNA figures"
                 },
                 "skip_fiber": {
                     "type": "boolean",
@@ -642,6 +717,9 @@
         },
         {
             "$ref": "#/$defs/padfoot_options"
+        },
+        {
+            "$ref": "#/$defs/reconplot_options"
         },
         {
             "$ref": "#/$defs/ascat_parameters"

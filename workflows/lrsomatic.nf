@@ -29,6 +29,13 @@ include { PADFOOT as PADFOOT_SEVERUS_WAKHAN } from '../modules/local/padfoot/mai
 include { PADFOOT as PADFOOT_SAVANA         } from '../modules/local/padfoot/main'
 include { WGET as PADFOOT_WGET              } from '../modules/nf-core/wget/main'
 include { UNTAR as PADFOOT_UNTAR            } from '../modules/nf-core/untar/main'
+include { RECONPLOT as RECONPLOT_ASCAT_SEVERUS  } from '../modules/local/reconplot/main'
+include { RECONPLOT as RECONPLOT_WAKHAN_SEVERUS } from '../modules/local/reconplot/main'
+include { RECONPLOT as RECONPLOT_SAVANA         } from '../modules/local/reconplot/main'
+include { WGET as RECONPLOT_WGET                } from '../modules/nf-core/wget/main'
+include { UNTAR as RECONPLOT_UNTAR              } from '../modules/nf-core/untar/main'
+include { WGET as RECONPLOT_PKG_WGET            } from '../modules/nf-core/wget/main'
+include { UNTAR as RECONPLOT_PKG_UNTAR          } from '../modules/nf-core/untar/main'
 include { METAEXTRACT                       } from '../modules/local/metaextract/main'
 include { WAKHAN                            } from '../modules/local/wakhan/main'
 include { FIBERTOOLSRS_PREDICTM6A           } from '../modules/local/fibertoolsrs/predictm6a'
@@ -1141,6 +1148,99 @@ workflow LRSOMATIC {
                 padfoot_annot
             )
             ch_versions = ch_versions.mix(PADFOOT_SAVANA.out.versions)
+        }
+    }
+
+    //
+    // MODULE: RECONPLOT (label: process_low)
+    // Rearrangement + copy-number figures (ReConPlot) for each available CN/SV caller pair, written to
+    // {outdir}/{sample}/reconplot/{ascat_severus,wakhan_severus,savana}/ with per-chromosome figures, a
+    // genome-wide strip and the harmonised CN/SV tables. Paired and tumour-only samples alike; a pair is
+    // only produced when both callers emitted output for the sample (join semantics).
+    // The wrapper (Tim-Yu/ReConPlot) and the ReConPlot R package are staged as source (WGET+UNTAR or
+    // local dirs); the container ships the package pre-installed, conda installs it at run time.
+    //
+
+    if (!params.skip_reconplot) {
+
+        def reconplot_genome = params.reconplot_genome ?:
+            (params.genome == 'GRCh38' ? 'hg38' : params.genome == 'CHM13' ? 'T2T' : 'hg38')
+        if (!params.reconplot_genome && !(params.genome in ['GRCh38', 'CHM13'])) {
+            log.warn "ReConPlot: genome '${params.genome}' not recognised; using hg38 gene/chromosome annotations. Set --reconplot_genome to override."
+        }
+
+        if (params.reconplot_dir) {
+            reconplot_src = channel.value([[id: 'reconplot'], file(params.reconplot_dir, type: 'dir', checkIfExists: true)])
+        }
+        else {
+            RECONPLOT_WGET( channel.value([[id: 'reconplot'], params.reconplot_url]) )
+            RECONPLOT_UNTAR( RECONPLOT_WGET.out.outfile )
+            reconplot_src = RECONPLOT_UNTAR.out.untar
+        }
+        if (params.reconplot_pkg_dir) {
+            reconplot_pkg = channel.value([[id: 'reconplot_pkg'], file(params.reconplot_pkg_dir, type: 'dir', checkIfExists: true)])
+        }
+        else {
+            RECONPLOT_PKG_WGET( channel.value([[id: 'reconplot_pkg'], params.reconplot_pkg_url]) )
+            RECONPLOT_PKG_UNTAR( RECONPLOT_PKG_WGET.out.outfile )
+            reconplot_pkg = RECONPLOT_PKG_UNTAR.out.untar
+        }
+        // reconplot_src: [meta, dir]  -- wrapper (run_reconplot.R + R/)
+        // reconplot_pkg: [meta, dir]  -- ReConPlot R package source
+
+        // Severus somatic SVs are the SV component for the two lrsomatic CN callers
+        severus_sv_files = SEVERUS.out.somatic_vcf.map { meta, vcf -> [meta, [vcf]] }
+        // severus_sv_files: [meta, [severus_somatic.vcf.gz]]
+
+        if (!params.skip_ascat) {
+            ASCAT.out.segments
+                .join(ASCAT.out.purityploidy)
+                .join(ASCAT.out.bafs)
+                // *segments.txt glob also matches *segments_raw.txt; the wrapper needs the fitted segments only
+                .map { meta, seg, pp, bafs -> [meta, ([seg].flatten().findAll { !it.name.endsWith('segments_raw.txt') } + [pp, bafs]).flatten()] }
+                .join(severus_sv_files)
+                .map { meta, cn, sv -> [meta, 'ascat', cn, 'severus', sv] }
+                .set { reconplot_ascat_input }
+            // reconplot_ascat_input: [meta, 'ascat', [segments.txt, purityploidy.txt, *BAF.txt], 'severus', [vcf]]
+
+            RECONPLOT_ASCAT_SEVERUS( reconplot_ascat_input, reconplot_src, reconplot_pkg, reconplot_genome )
+            ch_versions = ch_versions.mix(RECONPLOT_ASCAT_SEVERUS.out.versions)
+        }
+
+        if (!params.skip_wakhan) {
+            // Top-ranked Wakhan solution: allele-specific segment BEDs (HP1 + HP2) plus the ranking table
+            WAKHAN.out.bed_files
+                .map { meta, beds ->
+                    def files = [beds].flatten()
+                    def hp = files.findAll { it.name ==~ /.*_copynumbers_segments_HP_[12]\.bed/ }
+                    def best = hp.findAll { it.toString().contains('/solution_1/') } ?: hp
+                    return [meta, best.unique { it.name }]
+                }
+                .filter { _meta, beds -> beds.size() == 2 }
+                .join(WAKHAN.out.solutions_ranks)
+                .map { meta, beds, ranks -> [meta, beds + [ranks]] }
+                .join(severus_sv_files)
+                .map { meta, cn, sv -> [meta, 'wakhan', cn, 'severus', sv] }
+                .set { reconplot_wakhan_input }
+            // reconplot_wakhan_input: [meta, 'wakhan', [HP_1.bed, HP_2.bed, solutions_ranks.tsv], 'severus', [vcf]]
+
+            RECONPLOT_WAKHAN_SEVERUS( reconplot_wakhan_input, reconplot_src, reconplot_pkg, reconplot_genome )
+            ch_versions = ch_versions.mix(RECONPLOT_WAKHAN_SEVERUS.out.versions)
+        }
+
+        if (!params.skip_savana) {
+            // Single-source mode: all SAVANA files in cn_files, sv_files empty.
+            // allele_counts is optional (absent without an SNP source), so join with remainder and drop nulls.
+            SAVANA.out.cna
+                .join(SAVANA.out.somatic_bedpe)
+                .join(SAVANA.out.fitted_purity_ploidy)
+                .join(SAVANA.out.allele_counts, remainder: true)
+                .map { meta, cna, bedpe, pp, hetsnp -> [meta, 'savana', [cna, bedpe, pp, hetsnp].findAll { it != null }, 'savana', []] }
+                .set { reconplot_savana_input }
+            // reconplot_savana_input: [meta, 'savana', [segmented_absolute_copy_number.tsv, classified.somatic.bedpe, fitted_purity_ploidy.tsv, allele_counts_hetSNPs.bed], 'savana', []]
+
+            RECONPLOT_SAVANA( reconplot_savana_input, reconplot_src, reconplot_pkg, reconplot_genome )
+            ch_versions = ch_versions.mix(RECONPLOT_SAVANA.out.versions)
         }
     }
 
