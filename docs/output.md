@@ -35,6 +35,10 @@ The pipeline produces per-sample output directories. Two modes exist depending o
 │    │   ├── deepvariant
 │    │   ├── phased
 │    │   └── severus
+│    ├── reconplot
+│    │   ├── ascat_severus
+│    │   ├── wakhan_severus
+│    │   └── savana
 │    ├── vep
 │    │   ├── somatic
 │    │   └── SVs
@@ -498,6 +502,39 @@ Phased variant calls produced by Longphase. Present in all samples.
 | `padfoot.log`       | Padfoot log                                                                                                                              |
 
 `severus_wakhan/` combines Severus somatic SVs with the top-ranked Wakhan copy-number solution; `savana/` combines SAVANA classified somatic SVs with SAVANA absolute copy number (only present when SAVANA CNA was produced).
+
+</details>
+
+### `reconplot`
+
+<details markdown="1">
+<summary>Output files</summary>
+
+```
+├── reconplot
+│   ├── ascat_severus
+│   │   ├── per_chromosome/sample_chr{1..22,X,Y}.{pdf,png}
+│   │   ├── genome_wide/sample_genome_wide.{pdf,png}
+│   │   ├── focus/sample_<regions>.{pdf,png}
+│   │   ├── sample.reconplot_cn.tsv
+│   │   ├── sample.reconplot_sv.tsv
+│   │   └── reconplot.log
+│   ├── wakhan_severus
+│   │   └── (same layout)
+│   └── savana
+│       └── (same layout)
+```
+
+| File                     | Description                                                                                          |
+| ------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `per_chromosome/*`       | One ReConPlot figure per chromosome: copy number (total + minor allele) with SV arcs coloured by type |
+| `genome_wide/*`          | All chromosomes side by side in one strip                                                            |
+| `focus/*`                | Multi-panel figure for `--reconplot_regions`, with gene labels / BAF track if requested (optional)    |
+| `sample.reconplot_cn.tsv`| Harmonised CN table (`chr,start,end,copyNumber,minorAlleleCopyNumber`) as passed to ReConPlot        |
+| `sample.reconplot_sv.tsv`| Harmonised SV table (`chr1,pos1,chr2,pos2,strands`) as passed to ReConPlot                            |
+| `reconplot.log`          | Wrapper log (parser choices, purity/ploidy read, filters applied)                                    |
+
+`ascat_severus/` and `wakhan_severus/` pair Severus somatic SVs with ASCAT or the top-ranked Wakhan copy-number solution; `savana/` uses SAVANA's own SVs and absolute copy number. A pair is only produced when both callers ran for the sample.
 
 </details>
 
