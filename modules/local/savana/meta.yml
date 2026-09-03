@@ -1,0 +1,249 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "savana"
+description: Somatic structural variant and copy number aberration caller for long-read tumour(-normal) data. Runs the full SAVANA workflow (run -> classify -> cna), or `savana to` when no normal is supplied.
+keywords:
+  - structural-variation
+  - copy-number
+  - somatic
+  - long-read
+  - nanopore
+  - pacbio
+tools:
+  - "savana":
+      description: "SAVANA: somatic structural variant and copy number caller for long-read sequencing data"
+      homepage: "https://github.com/cortes-ciriano-lab/savana"
+      documentation: "https://github.com/cortes-ciriano-lab/savana"
+      tool_dev_url: "https://github.com/cortes-ciriano-lab/savana"
+      doi: "10.1038/s41592-025-02708-0"
+      licence: ["Apache-2.0"]
+      identifier: biotools:savana
+
+input:
+  - - meta:
+        type: map
+        description: Groovy Map containing sample information, e.g. `[ id:'sample1', sex:'male', platform:'ont' ]`
+    - tumour_bam:
+        type: file
+        description: Tumour BAM/CRAM (ideally haplotagged)
+        pattern: "*.{bam,cram}"
+    - tumour_bai:
+        type: file
+        description: Tumour BAM/CRAM index
+        pattern: "*.{bai,crai}"
+    - normal_bam:
+        type: file
+        description: Matched normal BAM/CRAM (optional; empty list triggers tumour-only mode)
+        pattern: "*.{bam,cram}"
+    - normal_bai:
+        type: file
+        description: Matched normal BAM/CRAM index (optional)
+        pattern: "*.{bai,crai}"
+    - snp_vcf:
+        type: file
+        description: Germline SNP VCF used to extract heterozygous SNPs for allele counting (optional)
+        pattern: "*.vcf{,.gz}"
+    - snp_tbi:
+        type: file
+        description: Index for snp_vcf (optional)
+        pattern: "*.tbi"
+  - - meta2:
+        type: map
+        description: Groovy Map for the reference
+    - fasta:
+        type: file
+        description: Reference genome FASTA
+        pattern: "*.{fa,fasta}"
+  - - meta3:
+        type: map
+        description: Groovy Map for the reference index
+    - fai:
+        type: file
+        description: Reference genome FASTA index
+        pattern: "*.fai"
+  - - meta4:
+        type: map
+        description: Groovy Map for auxiliary files
+    - contigs:
+        type: file
+        description: Text file with one contig per line to restrict analysis (optional; canonical chromosomes inferred from fai when absent)
+        pattern: "*.txt"
+    - blacklist:
+        type: file
+        description: BED of regions to exclude from copy number read counting (optional)
+        pattern: "*.bed"
+  - - g1000_vcf:
+        type: string
+        description: Bundled 1000G panel to use for allele counting when no snp_vcf is given (`1000g_hg38`, `1000g_t2t`, `1000g_hg19`), or empty string for none
+
+output:
+  - sv_breakpoints_vcf:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.sv_breakpoints.vcf.gz":
+          type: file
+          description: All raw SV breakpoints (bgzipped)
+          pattern: "*.sv_breakpoints.vcf.gz"
+  - sv_breakpoints_tbi:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.sv_breakpoints.vcf.gz.tbi":
+          type: file
+          description: Index for raw SV breakpoints VCF
+          pattern: "*.sv_breakpoints.vcf.gz.tbi"
+  - sv_breakpoints_bedpe:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.sv_breakpoints.bedpe":
+          type: file
+          description: All raw SV breakpoints in BEDPE format
+          pattern: "*.sv_breakpoints.bedpe"
+  - read_support:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.sv_breakpoints_read_support.tsv":
+          type: file
+          description: Supporting read IDs per variant
+          pattern: "*_read_support.tsv"
+  - inserted_sequences:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.inserted_sequences.fa":
+          type: file
+          description: Inserted sequences supporting insertion calls
+          pattern: "*.inserted_sequences.fa"
+  - classified_vcf:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.classified.vcf.gz":
+          type: file
+          description: All breakpoints with CLASS annotation (bgzipped)
+          pattern: "*.classified.vcf.gz"
+  - classified_tbi:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.classified.vcf.gz.tbi":
+          type: file
+          description: Index for classified VCF
+          pattern: "*.classified.vcf.gz.tbi"
+  - somatic_vcf:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.classified.somatic.vcf.gz":
+          type: file
+          description: PASS somatic SVs (bgzipped)
+          pattern: "*.classified.somatic.vcf.gz"
+  - somatic_tbi:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.classified.somatic.vcf.gz.tbi":
+          type: file
+          description: Index for somatic SV VCF
+          pattern: "*.classified.somatic.vcf.gz.tbi"
+  - somatic_bedpe:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.classified.somatic.bedpe":
+          type: file
+          description: PASS somatic SVs in BEDPE format
+          pattern: "*.classified.somatic.bedpe"
+  - legacy_vcfs:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.classified.{strict,lenient}.vcf":
+          type: file
+          description: Legacy strict/lenient VCFs (only with `--legacy`)
+          pattern: "*.classified.{strict,lenient}.vcf"
+  - allele_counts:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}_allele_counts_hetSNPs.bed":
+          type: file
+          description: Allele counts at heterozygous SNPs
+          pattern: "*_allele_counts_hetSNPs.bed"
+  - raw_read_counts:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}_raw_read_counts.tsv":
+          type: file
+          description: Raw binned read counts
+          pattern: "*_raw_read_counts.tsv"
+  - segmented_log2r:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}_read_counts_*_log2r_segmented.tsv":
+          type: file
+          description: Segmented log2 ratio relative copy number
+          pattern: "*_log2r_segmented.tsv"
+  - ranked_solutions:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}_ranked_solutions.tsv":
+          type: file
+          description: All viable purity/ploidy solutions ranked
+          pattern: "*_ranked_solutions.tsv"
+  - fitted_purity_ploidy:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}_fitted_purity_ploidy.tsv":
+          type: file
+          description: Selected purity/ploidy fit
+          pattern: "*_fitted_purity_ploidy.tsv"
+  - cna:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}_segmented_absolute_copy_number.tsv":
+          type: file
+          description: Segmented allele-specific absolute copy number
+          pattern: "*_segmented_absolute_copy_number.tsv"
+  - binned_ref:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*kbp_bin_ref_*_${prefix}*.bed":
+          type: file
+          description: Binned reference used for read counting
+          pattern: "*kbp_bin_ref_*.bed"
+  - no_fit:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "No_fit_found_PARAMS.tsv":
+          type: file
+          description: Emitted when no valid copy number fit was found
+          pattern: "No_fit_found_PARAMS.tsv"
+  - contigs_used:
+      - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "${prefix}.contigs.txt":
+          type: file
+          description: Contigs list passed to SAVANA
+          pattern: "*.contigs.txt"
+  - versions:
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+
+authors:
+  - "@Tim-Yu"
+maintainers:
+  - "@Tim-Yu"

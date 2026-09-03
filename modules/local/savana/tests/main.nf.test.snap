@@ -1,0 +1,899 @@
+{
+    "homo_sapiens - nanopore - paired": {
+        "content": [
+            "VcfFile [chromosomes=[chr22], sampleCount=1, variantCount=28, phased=false, phasedAutodetect=false]",
+            "VcfFile [chromosomes=[chr22], sampleCount=1, variantCount=28, phased=false, phasedAutodetect=false]",
+            "VcfFile [chromosomes=[], sampleCount=1, variantCount=0, phased=true, phasedAutodetect=true]",
+            "test.sv_breakpoints.bedpe",
+            "test.classified.somatic.bedpe",
+            16,
+            "test.inserted_sequences.fa",
+            [
+                "chr22"
+            ],
+            [
+                
+            ],
+            [
+                "versions.yml:md5,ece781cd6e479db075112057c2cdfedd"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-09-02T15:49:37.532583246"
+    },
+    "homo_sapiens - nanopore - paired - snp_vcf - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "10": [
+                    
+                ],
+                "11": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_allele_counts_hetSNPs.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "12": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_raw_read_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "13": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_read_counts_mnorm_log2r_segmented.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "14": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_ranked_solutions.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "15": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_fitted_purity_ploidy.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "16": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_segmented_absolute_copy_number.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "17": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "10kbp_bin_ref_all_test_with_SV_breakpoints.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "18": [
+                    
+                ],
+                "19": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.contigs.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "20": [
+                    "versions.yml:md5,ece781cd6e479db075112057c2cdfedd"
+                ],
+                "3": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints_read_support.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "4": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.inserted_sequences.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "5": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "6": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "7": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.somatic.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "8": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.somatic.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "9": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.somatic.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "allele_counts": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_allele_counts_hetSNPs.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "binned_ref": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "10kbp_bin_ref_all_test_with_SV_breakpoints.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "classified_tbi": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "classified_vcf": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "cna": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_segmented_absolute_copy_number.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "contigs_used": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.contigs.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "fitted_purity_ploidy": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_fitted_purity_ploidy.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "inserted_sequences": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.inserted_sequences.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "legacy_vcfs": [
+                    
+                ],
+                "no_fit": [
+                    
+                ],
+                "ranked_solutions": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_ranked_solutions.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "raw_read_counts": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_raw_read_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "read_support": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints_read_support.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "segmented_log2r": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test_read_counts_mnorm_log2r_segmented.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "somatic_bedpe": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.somatic.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "somatic_tbi": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.somatic.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "somatic_vcf": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.classified.somatic.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "sv_breakpoints_bedpe": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "sv_breakpoints_tbi": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "sv_breakpoints_vcf": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "male",
+                            "platform": "ont",
+                            "paired_data": "test"
+                        },
+                        "test.sv_breakpoints.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,ece781cd6e479db075112057c2cdfedd"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-09-02T15:49:57.341418595"
+    },
+    "homo_sapiens - nanopore - tumour only - g1000 - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "10": [
+                    
+                ],
+                "11": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_allele_counts_hetSNPs.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "12": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_raw_read_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "13": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_read_counts_mnorm_log2r_segmented.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "14": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_ranked_solutions.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "15": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_fitted_purity_ploidy.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "16": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_segmented_absolute_copy_number.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "17": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "10kbp_bin_ref_all_test_with_SV_breakpoints.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "18": [
+                    
+                ],
+                "19": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.contigs.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "20": [
+                    "versions.yml:md5,ece781cd6e479db075112057c2cdfedd"
+                ],
+                "3": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints_read_support.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "4": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.inserted_sequences.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "5": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "6": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "7": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.somatic.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "8": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.somatic.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "9": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.somatic.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "allele_counts": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_allele_counts_hetSNPs.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "binned_ref": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "10kbp_bin_ref_all_test_with_SV_breakpoints.bed:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "classified_tbi": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "classified_vcf": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "cna": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_segmented_absolute_copy_number.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "contigs_used": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.contigs.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "fitted_purity_ploidy": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_fitted_purity_ploidy.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "inserted_sequences": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.inserted_sequences.fa:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "legacy_vcfs": [
+                    
+                ],
+                "no_fit": [
+                    
+                ],
+                "ranked_solutions": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_ranked_solutions.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "raw_read_counts": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_raw_read_counts.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "read_support": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints_read_support.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "segmented_log2r": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test_read_counts_mnorm_log2r_segmented.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "somatic_bedpe": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.somatic.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "somatic_tbi": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.somatic.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "somatic_vcf": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.classified.somatic.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "sv_breakpoints_bedpe": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints.bedpe:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "sv_breakpoints_tbi": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints.vcf.gz.tbi:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "sv_breakpoints_vcf": [
+                    [
+                        {
+                            "id": "test",
+                            "sex": "female",
+                            "platform": "ont",
+                            "paired_data": null
+                        },
+                        "test.sv_breakpoints.vcf.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,ece781cd6e479db075112057c2cdfedd"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-09-02T15:50:03.381992424"
+    },
+    "homo_sapiens - nanopore - tumour only": {
+        "content": [
+            "VcfFile [chromosomes=[chr22], sampleCount=1, variantCount=3, phased=false, phasedAutodetect=false]",
+            "VcfFile [chromosomes=[chr22], sampleCount=1, variantCount=3, phased=false, phasedAutodetect=false]",
+            "VcfFile [chromosomes=[], sampleCount=1, variantCount=0, phased=true, phasedAutodetect=true]",
+            3,
+            [
+                "chr22"
+            ],
+            [
+                
+            ],
+            [
+                "versions.yml:md5,ece781cd6e479db075112057c2cdfedd"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.10.4"
+        },
+        "timestamp": "2026-09-02T15:49:51.32165488"
+    }
+}
