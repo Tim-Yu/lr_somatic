@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added`
 
 - Added SAVANA module for somatic SV and copy number calling on haplotagged BAMs (paired: `savana` with phased germline VCF as SNP source; tumour-only: `savana to` with bundled 1000G panel). New params `skip_savana`, `savana_minsupport`, `savana_contigs`, `savana_blacklist`, `savana_g1000_vcf`, `savana_cn_binsize`, `savana_single_bnd` (@Tim-Yu).
+- Added Padfoot annotation of somatic SVs + CNAs for both Severus/Wakhan and SAVANA outputs (paired and tumour-only). Padfoot source is fetched from GitHub (or `--padfoot_dir`) and run in a Seqera Containers image / conda env of its dependencies. RepeatMasker annotation of inserted sequences runs by default under Docker/Singularity via a public image bundling RepeatMasker 4.2.4 + Dfam 4.0 (`ghcr.io/tim-yu/padfoot-repeatmasker`). New params `skip_padfoot`, `padfoot_url`, `padfoot_dir`, `padfoot_genome`, `padfoot_gff`, `padfoot_rm`, `padfoot_run_repeatmasker`, `padfoot_repeatmasker_container` (@Tim-Yu).
 - [#117](https://github.com/IntGenomicsLab/lrsomatic/pull/117) - Added ASCAT PDF plots to output (@robert-a-forsyth).
 - [#126](https://github.com/IntGenomicsLab/lrsomatic/pull/126) - Added ASCAT raw segments txt files to output (@AmberVerhasselt).
 - [#135](https://github.com/IntGenomicsLab/lrsomatic/pull/135) - Added `skip_m6a` parameter to allow skipping m6A base modification steps (@robert-a-forsyth).

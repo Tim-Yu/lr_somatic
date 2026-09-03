@@ -25,6 +25,10 @@ include { MOSDEPTH                          } from '../modules/nf-core/mosdepth/
 include { ASCAT                             } from '../modules/nf-core/ascat/main'
 include { SEVERUS                           } from '../modules/nf-core/severus/main.nf'
 include { SAVANA                            } from '../modules/local/savana/main'
+include { PADFOOT as PADFOOT_SEVERUS_WAKHAN } from '../modules/local/padfoot/main'
+include { PADFOOT as PADFOOT_SAVANA         } from '../modules/local/padfoot/main'
+include { WGET as PADFOOT_WGET              } from '../modules/nf-core/wget/main'
+include { UNTAR as PADFOOT_UNTAR            } from '../modules/nf-core/untar/main'
 include { METAEXTRACT                       } from '../modules/local/metaextract/main'
 include { WAKHAN                            } from '../modules/local/wakhan/main'
 include { FIBERTOOLSRS_PREDICTM6A           } from '../modules/local/fibertoolsrs/predictm6a'
@@ -1044,6 +1048,100 @@ workflow LRSOMATIC {
             ch_fasta,
             file(params.centromere_bed)
         )
+    }
+
+    //
+    // MODULE: PADFOOT (label: process_medium)
+    // Functional annotation of somatic SVs + CNAs. Run once per available SV/CNA caller pair:
+    //   PADFOOT_SEVERUS_WAKHAN -- Severus somatic SVs + Wakhan best-solution integer CNA VCF
+    //   PADFOOT_SAVANA         -- SAVANA classified somatic SVs + SAVANA segmented absolute CN TSV
+    // Both paired and tumour-only samples are annotated. SAVANA CNA only exists when an SNP source was
+    // available (phased germline VCF for paired; 1000G panel for tumour-only on GRCh38/CHM13), so the
+    // join silently drops samples without CNA.
+    // Padfoot is not on bioconda: the source tree is downloaded (params.padfoot_url) or taken from a
+    // local checkout (params.padfoot_dir); the container/conda env provide only its dependencies.
+    // Unsupported genomes (no bundled or user-supplied annotations) skip Padfoot with a warning.
+    //
+
+    def padfoot_genome = params.padfoot_genome ?:
+        (params.genome == 'GRCh38' ? 'hg38' : params.genome == 'CHM13' ? 'chm13' : null)
+    // Padfoot only bundles hg38/mm10 annotations
+    def padfoot_annot_ok = padfoot_genome && ((padfoot_genome in ['hg38', 'mm10']) || (params.padfoot_gff && params.padfoot_rm))
+    if (!params.skip_padfoot && !padfoot_annot_ok) {
+        log.warn "Padfoot skipped: no annotations for genome '${params.genome}' (padfoot_genome=${padfoot_genome}). " +
+                 "Set --padfoot_genome hg38|mm10, or provide --padfoot_gff and --padfoot_rm."
+    }
+    if (!params.skip_padfoot && params.padfoot_run_repeatmasker && !params.padfoot_repeatmasker_container) {
+        error "Padfoot RepeatMasker is enabled but no --padfoot_repeatmasker_container was supplied. " +
+              "Provide a digest-pinned image that contains RepeatMasker and Dfam."
+    }
+
+    if (!params.skip_padfoot && padfoot_annot_ok) {
+
+        padfoot_annot = [
+            [:],
+            padfoot_genome,
+            params.padfoot_gff ? file(params.padfoot_gff, checkIfExists: true) : [],
+            params.padfoot_rm  ? file(params.padfoot_rm,  checkIfExists: true) : []
+        ]
+
+        if (params.padfoot_dir) {
+            padfoot_src = channel.value([[id: 'padfoot'], file(params.padfoot_dir, type: 'dir', checkIfExists: true)])
+        }
+        else {
+            // MODULE: PADFOOT_WGET + PADFOOT_UNTAR -- fetch Padfoot source tarball (GitHub archive)
+            PADFOOT_WGET( channel.value([[id: 'padfoot'], params.padfoot_url]) )
+            PADFOOT_UNTAR( PADFOOT_WGET.out.outfile )
+            padfoot_src = PADFOOT_UNTAR.out.untar
+            ch_versions = ch_versions.mix(PADFOOT_WGET.out.versions)
+        }
+        // padfoot_src: [meta, dir]  -- directory containing padfoot.py and beds/
+
+        if (!params.skip_wakhan) {
+            // Wakhan writes every fitted solution; solution_1/ holds the top-ranked one
+            WAKHAN.out.vcf_files
+                .map { meta, vcfs ->
+                    def files = [vcfs].flatten()
+                    def integers = files.findAll { it.name.endsWith('_wakhan_cna_integers.vcf') }
+                    def best = integers.find { it.toString().contains('/solution_1/') } ?: integers[0]
+                    return [meta, best]
+                }
+                .filter { _meta, vcf -> vcf != null }
+                .set { wakhan_best_cna }
+            // wakhan_best_cna: [meta, wakhan_cna_integers.vcf]
+
+            SEVERUS.out.somatic_vcf
+                .join(wakhan_best_cna)
+                .map { meta, sv, cna -> [meta, sv, 'severus', cna, 'wakhan'] }
+                .set { padfoot_severus_wakhan_input }
+            // padfoot_severus_wakhan_input: [meta, severus_somatic.vcf.gz, 'severus', wakhan_cna_integers.vcf, 'wakhan']
+
+            PADFOOT_SEVERUS_WAKHAN (
+                padfoot_severus_wakhan_input,
+                ch_fasta,
+                ch_fai,
+                padfoot_src,
+                padfoot_annot
+            )
+            ch_versions = ch_versions.mix(PADFOOT_SEVERUS_WAKHAN.out.versions)
+        }
+
+        if (!params.skip_savana) {
+            SAVANA.out.somatic_vcf
+                .join(SAVANA.out.cna)
+                .map { meta, sv, cna -> [meta, sv, 'savana', cna, 'savana'] }
+                .set { padfoot_savana_input }
+            // padfoot_savana_input: [meta, classified.somatic.vcf.gz, 'savana', segmented_absolute_copy_number.tsv, 'savana']
+
+            PADFOOT_SAVANA (
+                padfoot_savana_input,
+                ch_fasta,
+                ch_fai,
+                padfoot_src,
+                padfoot_annot
+            )
+            ch_versions = ch_versions.mix(PADFOOT_SAVANA.out.versions)
+        }
     }
 
     //

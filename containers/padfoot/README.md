@@ -1,0 +1,23 @@
+# Padfoot RepeatMasker image
+
+This image is only required when `--padfoot_run_repeatmasker` is enabled. It embeds the Dfam 4.0 root and curated-consensus FamDB partitions, configures FamDB at build time, and validates human RepeatMasker during the build.
+
+Build and publish from the pipeline root:
+
+```bash
+export PADFOOT_IMAGE=<registry>/padfoot-repeatmasker:4.2.4-dfam4
+docker build -f containers/padfoot/Dockerfile -t "$PADFOOT_IMAGE" .
+docker push "$PADFOOT_IMAGE"
+```
+
+Resolve the pushed image digest and use that immutable reference when starting the pipeline:
+
+```bash
+nextflow run . -profile singularity \
+  --padfoot_run_repeatmasker \
+  --padfoot_repeatmasker_container <registry>/padfoot-repeatmasker@sha256:<digest>
+```
+
+The Dockerfile verifies the decompressed Dfam partition checksums. A changed Dfam `current` release therefore fails the build rather than silently changing the annotation database.
+
+This checkout defaults to the pushed digest-pinned image `ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d352ec47cd9fa015f321959dcba7f6c6cd4da05beaea8d811b97dff70f5`, so RepeatMasker runs without adding `--padfoot_run_repeatmasker` when using Docker, Singularity, or Apptainer.

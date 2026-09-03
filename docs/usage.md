@@ -145,6 +145,7 @@ If you want to run with a CHM13 reference without using `--genome CHM13` (for ex
 | `--skip_bamstats`      | A boolean to skip `bamstats`. Default = `false`                                                                                                                                      |
 | `--skip_wakhan`        | A boolean to skip `wakhan`. Default = `false`                                                                                                                                        |
 | `--skip_savana`        | A boolean to skip `savana` SV and copy number calling. Default = `false`                                                                                                             |
+| `--skip_padfoot`       | A boolean to skip `padfoot` SV/CNA annotation. Default = `false`                                                                                                                     |
 | `--skip_vep`           | A boolean to skip `vep`. Default = `false`                                                                                                                                           |
 | `--skip_m6a`           | A boolean to skip `fibertools_m6a`, used if you have m6a calls but would still like nucleosome positions for PacBio data (ONT data is required to have m6a calls). Default = `false` |
 | `--skip_nanoplot`      | A boolean to skip NanoPlot QC on aligned and unaligned BAM files. Default = `false`                                                                                                  |
@@ -227,6 +228,28 @@ SAVANA is run on the haplotagged BAMs. For paired samples the full `savana` work
 | `--savana_cn_binsize` | Copy number bin size in kbp. Default = `null` (tool default: 10)                                                                                                  |
 | `--savana_single_bnd` | Report single breakend variants in addition to standard SV types. Default = `false`                                                                              |
 
+#### Padfoot Options
+
+[Padfoot](https://github.com/KolmogorovLab/Padfoot) annotates somatic SVs and CNAs with gene/exon overlap, repeat context and complex-SV grouping. It is run for every available SV/CNA caller pair, for paired and tumour-only samples alike:
+
+- `padfoot/severus_wakhan/` -- Severus somatic SVs + the top-ranked (`solution_1`) Wakhan integer copy-number VCF (requires Wakhan not skipped)
+- `padfoot/savana/` -- SAVANA classified somatic SVs + SAVANA segmented absolute copy number (requires SAVANA CNA, i.e. an SNP source: the phased germline VCF for paired samples, or the bundled 1000G panel for tumour-only samples on GRCh38/CHM13). Samples without SAVANA CNA are silently skipped.
+
+Padfoot is not distributed on bioconda. The pipeline downloads the source tree from `--padfoot_url` (GitHub archive, once per run) and runs it inside a container / conda environment that provides its dependencies (python, pysam, pandas, biopython, samtools, minimap2, bedtools). On systems without internet access on compute nodes, clone Padfoot once and pass the checkout with `--padfoot_dir`.
+
+RepeatMasker (used only to classify the sequence of novel insertions) runs by default. Under Docker/Singularity/Apptainer it runs from a dedicated public image (`ghcr.io/tim-yu/padfoot-repeatmasker`) with the full Dfam 4.0 database baked in. Under `-profile conda` it uses the small curated Dfam subset bundled with bioconda RepeatMasker (sufficient for common human repeats such as Alu/L1/SVA). Use `--padfoot_run_repeatmasker false` to disable it; all other Padfoot annotations are unaffected.
+
+Padfoot bundles gene and repeat annotations for `hg38` and `mm10` only. For other genomes (e.g. CHM13) provide `--padfoot_gff` and `--padfoot_rm`, otherwise Padfoot is skipped with a warning.
+
+| Parameter                    | Description                                                                                                                                                                  |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--padfoot_url`              | URL of a Padfoot source tarball (GitHub archive). Default = pinned commit of `Tim-Yu/Padfoot` with Savana support                                                             |
+| `--padfoot_dir`              | Local Padfoot checkout (directory with `padfoot.py` and `beds/`); overrides `--padfoot_url`. Default = `null`                                                                 |
+| `--padfoot_genome`           | Padfoot genome preset (`hg38`, `chm13`, `mm10`). Default = `null` (inferred from `--genome`)                                                                                  |
+| `--padfoot_gff`              | Custom GFF3 gene annotation. Default = `null` (bundled)                                                                                                                       |
+| `--padfoot_rm`               | Custom RepeatMasker annotation. Default = `null` (bundled)                                                                                                                    |
+| `--padfoot_run_repeatmasker` | Run RepeatMasker on inserted sequences (repeat class of novel insertions). Containers use `--padfoot_repeatmasker_container` (full Dfam 4.0); conda uses the curated Dfam subset bundled with bioconda RepeatMasker. Default = `true` |
+| `--padfoot_repeatmasker_container` | Digest-pinned image with Padfoot dependencies + RepeatMasker 4.2.4 + Dfam 4.0. Default = `ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d35...` |
 #### Variant Filtering and Combining Options
 
 These options control how variants from multiple callers are filtered and merged.
