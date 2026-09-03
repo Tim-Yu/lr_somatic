@@ -474,6 +474,33 @@ Phased variant calls produced by Longphase. Present in all samples.
 
 </details>
 
+### `padfoot`
+
+<details markdown="1">
+<summary>Output files</summary>
+
+```
+├── padfoot
+│   ├── severus_wakhan
+│   │   ├── annotated_svs.tsv
+│   │   ├── by_gene.tsv
+│   │   └── padfoot.log
+│   └── savana
+│       ├── annotated_svs.tsv
+│       ├── by_gene.tsv
+│       └── padfoot.log
+```
+
+| File                | Description                                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `annotated_svs.tsv` | One row per somatic SV: breakpoints, support/VAF, overlapping genes and exons per breakend, repeat annotation, microhomology, VNTR, type |
+| `by_gene.tsv`       | One row per gene: SV and copy-number impact per haplotype                                                                                |
+| `padfoot.log`       | Padfoot log                                                                                                                              |
+
+`severus_wakhan/` combines Severus somatic SVs with the top-ranked Wakhan copy-number solution; `savana/` combines SAVANA classified somatic SVs with SAVANA absolute copy number (only present when SAVANA CNA was produced).
+
+</details>
+
 ### `wakhan`
 
 <details markdown="1">

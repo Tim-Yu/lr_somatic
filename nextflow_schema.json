@@ -267,6 +267,52 @@
                 }
             }
         },
+        "padfoot_options": {
+            "title": "Padfoot options",
+            "type": "object",
+            "description": "Options for Padfoot SV/CNA functional annotation",
+            "default": "",
+            "properties": {
+                "padfoot_url": {
+                    "type": "string",
+                    "default": "https://github.com/Tim-Yu/Padfoot/archive/bf942055d4a0c710aed1178869998350823b15e0.tar.gz",
+                    "description": "URL of a Padfoot source tarball (GitHub archive). Padfoot is not distributed on bioconda; the tarball is downloaded once per run."
+                },
+                "padfoot_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Local Padfoot checkout (directory containing padfoot.py and beds/). Overrides --padfoot_url; use for offline systems."
+                },
+                "padfoot_genome": {
+                    "type": "string",
+                    "enum": ["hg38", "chm13", "mm10"],
+                    "description": "Padfoot genome preset. Default: inferred from --genome (GRCh38 -> hg38, CHM13 -> chm13). Padfoot only bundles hg38/mm10 annotations; chm13 requires --padfoot_gff and --padfoot_rm."
+                },
+                "padfoot_gff": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Custom GFF3 gene annotation for Padfoot"
+                },
+                "padfoot_rm": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Custom RepeatMasker annotation (.fa.out / BED) for Padfoot"
+                },
+                "padfoot_run_repeatmasker": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Run RepeatMasker on inserted sequences. With Docker/Singularity/Apptainer this uses --padfoot_repeatmasker_container (full Dfam 4.0); with conda it uses the curated Dfam subset bundled with bioconda RepeatMasker."
+                },
+                "padfoot_repeatmasker_container": {
+                    "type": "string",
+                    "default": "ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d352ec47cd9fa015f321959dcba7f6c6cd4da05beaea8d811b97dff70f5",
+                    "description": "Digest-pinned Docker/Singularity image containing Padfoot dependencies, RepeatMasker 4.2.4 and Dfam 4.0."
+                }
+            }
+        },
         "ascat_parameters": {
             "title": "ASCAT parameters",
             "type": "object",
@@ -369,6 +415,10 @@
                 "skip_savana": {
                     "type": "boolean",
                     "description": "Skips SAVANA SV and copy number calling"
+                },
+                "skip_padfoot": {
+                    "type": "boolean",
+                    "description": "Skips Padfoot SV/CNA annotation"
                 },
                 "skip_fiber": {
                     "type": "boolean",
@@ -589,6 +639,9 @@
         },
         {
             "$ref": "#/$defs/savana_options"
+        },
+        {
+            "$ref": "#/$defs/padfoot_options"
         },
         {
             "$ref": "#/$defs/ascat_parameters"
