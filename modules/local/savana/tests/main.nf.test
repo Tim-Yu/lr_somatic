@@ -1,0 +1,156 @@
+nextflow_process {
+
+    name "Test Process SAVANA"
+    script "../main.nf"
+    process "SAVANA"
+    config "./nextflow.config"
+
+    tag "modules"
+    tag "modules_local"
+    tag "savana"
+
+    // Paired tumour/normal: full `savana` workflow. No SNP source -> SV calling + classification only.
+    test("homo_sapiens - nanopore - paired") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', sex:'male', platform:'ont', paired_data:'test' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test2.sorted.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test2.sorted.bam.bai', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test.sorted.phased.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test.sorted.phased.bam.bai', checkIfExists: true),
+                    [],
+                    []
+                ]
+                input[1] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ]
+                input[2] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ]
+                input[3] = [ [:], [], [] ]
+                input[4] = ''
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    path(process.out.sv_breakpoints_vcf.get(0).get(1)).vcf.summary,
+                    path(process.out.classified_vcf.get(0).get(1)).vcf.summary,
+                    path(process.out.somatic_vcf.get(0).get(1)).vcf.summary,
+                    file(process.out.sv_breakpoints_bedpe.get(0).get(1)).name,
+                    file(process.out.somatic_bedpe.get(0).get(1)).name,
+                    file(process.out.read_support.get(0).get(1)).readLines().size(),
+                    file(process.out.inserted_sequences.get(0).get(1)).name,
+                    file(process.out.contigs_used.get(0).get(1)).readLines(),
+                    process.out.cna,
+                    process.out.versions
+                ).match() }
+            )
+        }
+    }
+
+    // Tumour-only: `savana to`. g1000 panel disabled so CNA is skipped on the chr22 subset.
+    test("homo_sapiens - nanopore - tumour only") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', sex:'female', platform:'ont', paired_data:null ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/savana/colo829.PAU61426.sup.chr22.subset.0.05.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/savana/colo829.PAU61426.sup.chr22.subset.0.05.bam.bai', checkIfExists: true),
+                    [],
+                    [],
+                    [],
+                    []
+                ]
+                input[1] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta', checkIfExists: true) ]
+                input[2] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/chr22/sequence/hg38.chr22.fasta.fai', checkIfExists: true) ]
+                input[3] = [ [:], [], [] ]
+                input[4] = ''
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    path(process.out.sv_breakpoints_vcf.get(0).get(1)).vcf.summary,
+                    path(process.out.classified_vcf.get(0).get(1)).vcf.summary,
+                    path(process.out.somatic_vcf.get(0).get(1)).vcf.summary,
+                    file(process.out.read_support.get(0).get(1)).readLines().size(),
+                    file(process.out.contigs_used.get(0).get(1)).readLines(),
+                    process.out.cna,
+                    process.out.versions
+                ).match() }
+            )
+        }
+    }
+
+    test("homo_sapiens - nanopore - paired - snp_vcf - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', sex:'male', platform:'ont', paired_data:'test' ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test2.sorted.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test2.sorted.bam.bai', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test.sorted.phased.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test.sorted.phased.bam.bai', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/gatk/haplotypecaller_calls/test_haplotc.vcf.gz', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/gatk/haplotypecaller_calls/test_haplotc.vcf.gz.tbi', checkIfExists: true)
+                ]
+                input[1] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ]
+                input[2] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ]
+                input[3] = [ [:], [], [] ]
+                input[4] = ''
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("homo_sapiens - nanopore - tumour only - g1000 - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', sex:'female', platform:'ont', paired_data:null ],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test2.sorted.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/nanopore/bam/test2.sorted.bam.bai', checkIfExists: true),
+                    [],
+                    [],
+                    [],
+                    []
+                ]
+                input[1] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true) ]
+                input[2] = [ [ id:'ref' ], file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true) ]
+                input[3] = [ [:], [], [] ]
+                input[4] = '1000g_hg38'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

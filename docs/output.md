@@ -433,6 +433,47 @@ Phased variant calls produced by Longphase. Present in all samples.
 
 </details>
 
+### `savana`
+
+<details markdown="1">
+<summary>Output files</summary>
+
+```
+├── savana
+│   ├── sample.sv_breakpoints.vcf.gz(.tbi)
+│   ├── sample.sv_breakpoints.bedpe
+│   ├── sample.sv_breakpoints_read_support.tsv
+│   ├── sample.inserted_sequences.fa
+│   ├── sample.classified.vcf.gz(.tbi)
+│   ├── sample.classified.somatic.vcf.gz(.tbi)
+│   ├── sample.classified.somatic.bedpe
+│   ├── sample.contigs.txt
+│   ├── sample_allele_counts_hetSNPs.bed
+│   ├── sample_raw_read_counts.tsv
+│   ├── sample_read_counts_{mnorm,self}_log2r_segmented.tsv
+│   ├── sample_ranked_solutions.tsv
+│   ├── sample_fitted_purity_ploidy.tsv
+│   ├── sample_segmented_absolute_copy_number.tsv
+│   └── {binsize}kbp_bin_ref_all_sample_with_SV_breakpoints.bed
+```
+
+| File                                          | Description                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `sample.sv_breakpoints.vcf.gz`                | All raw SV breakpoints (two records per breakpoint, one per breakend)                    |
+| `sample.classified.vcf.gz`                    | All breakpoints annotated with the classifier decision (`CLASS` in INFO)                 |
+| `sample.classified.somatic.vcf.gz`            | PASS somatic SVs                                                                         |
+| `sample.classified.somatic.bedpe`             | PASS somatic SVs in BEDPE format                                                         |
+| `sample.sv_breakpoints_read_support.tsv`      | Tumour/normal supporting read IDs per variant                                            |
+| `sample.inserted_sequences.fa`                | Inserted sequences supporting insertion calls                                            |
+| `sample.contigs.txt`                          | Contigs analysed                                                                         |
+| `sample_allele_counts_hetSNPs.bed`            | Allele counts at heterozygous SNPs (from the phased germline VCF, or 1000G panel)        |
+| `sample_read_counts_*_log2r_segmented.tsv`    | Segmented log2 ratio relative copy number (`mnorm` = normalised to matched normal)       |
+| `sample_fitted_purity_ploidy.tsv`             | Selected purity/ploidy fit                                                               |
+| `sample_ranked_solutions.tsv`                 | All viable purity/ploidy solutions                                                       |
+| `sample_segmented_absolute_copy_number.tsv`   | Segmented allele-specific absolute copy number (input for ReConPlot)                     |
+
+</details>
+
 ### `wakhan`
 
 <details markdown="1">

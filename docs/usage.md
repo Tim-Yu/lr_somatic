@@ -144,6 +144,7 @@ If you want to run with a CHM13 reference without using `--genome CHM13` (for ex
 | `--skip_ascat`         | A boolean to skip `ascat`. Default = `false`                                                                                                                                         |
 | `--skip_bamstats`      | A boolean to skip `bamstats`. Default = `false`                                                                                                                                      |
 | `--skip_wakhan`        | A boolean to skip `wakhan`. Default = `false`                                                                                                                                        |
+| `--skip_savana`        | A boolean to skip `savana` SV and copy number calling. Default = `false`                                                                                                             |
 | `--skip_vep`           | A boolean to skip `vep`. Default = `false`                                                                                                                                           |
 | `--skip_m6a`           | A boolean to skip `fibertools_m6a`, used if you have m6a calls but would still like nucleosome positions for PacBio data (ONT data is required to have m6a calls). Default = `false` |
 | `--skip_nanoplot`      | A boolean to skip NanoPlot QC on aligned and unaligned BAM files. Default = `false`                                                                                                  |
@@ -213,6 +214,18 @@ If you want to run with a CHM13 reference without using `--genome CHM13` (for ex
 | Parameter         | Description                                                                                             |
 | ----------------- | ------------------------------------------------------------------------------------------------------- |
 | `--wakhan_chroms` | A string specifying a subset of chromosomes for WAKHAN to process, e.g. `"chr1,chr2"`. Default = `null` |
+#### SAVANA Options
+
+SAVANA is run on the haplotagged BAMs. For paired samples the full `savana` workflow (SV calling -> classification -> copy number) is run, using the pipeline's phased germline VCF as the SNP source for heterozygous-SNP allele counting. For tumour-only samples `savana to` is run and the SAVANA-bundled 1000G panel is used for allele counting.
+
+| Parameter             | Description                                                                                                                                                       |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--savana_minsupport` | Minimum supporting reads for a PASS SV. Default = `null` (tool default: 3 for ONT, 7 for PacBio)                                                                  |
+| `--savana_contigs`    | Text file with one contig per line to restrict analysis. Default = `null` (canonical chromosomes inferred from the reference `.fai`; chrY dropped for females)   |
+| `--savana_blacklist`  | BED file of regions excluded from copy number read counting. Default = `null`                                                                                     |
+| `--savana_g1000_vcf`  | Bundled 1000G panel for tumour-only allele counting: `1000g_hg38`, `1000g_t2t` or `1000g_hg19`. Default = `null` (inferred from `--genome`)                       |
+| `--savana_cn_binsize` | Copy number bin size in kbp. Default = `null` (tool default: 10)                                                                                                  |
+| `--savana_single_bnd` | Report single breakend variants in addition to standard SV types. Default = `false`                                                                              |
 
 #### Variant Filtering and Combining Options
 

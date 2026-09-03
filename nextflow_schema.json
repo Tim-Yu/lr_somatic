@@ -230,6 +230,43 @@
                 }
             }
         },
+        "savana_options": {
+            "title": "SAVANA options",
+            "type": "object",
+            "description": "Options for SAVANA somatic SV and copy number calling",
+            "default": "",
+            "properties": {
+                "savana_minsupport": {
+                    "type": "integer",
+                    "description": "Minimum supporting reads for a PASS SV. Default: tool default (3 for ONT, 7 for PacBio)"
+                },
+                "savana_contigs": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Text file listing contigs (one per line) to analyse. Default: canonical chromosomes inferred from the reference fai (chrY dropped for female samples)"
+                },
+                "savana_blacklist": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "BED file of regions to exclude from copy number read counting"
+                },
+                "savana_g1000_vcf": {
+                    "type": "string",
+                    "enum": ["1000g_hg38", "1000g_t2t", "1000g_hg19"],
+                    "description": "Bundled 1000G SNP panel for allele counting in tumour-only mode. Default: inferred from --genome (GRCh38 -> 1000g_hg38, CHM13 -> 1000g_t2t). Paired samples use the pipeline's phased germline VCF instead."
+                },
+                "savana_cn_binsize": {
+                    "type": "integer",
+                    "description": "Copy number bin size in kbp. Default: tool default (10)"
+                },
+                "savana_single_bnd": {
+                    "type": "boolean",
+                    "description": "Report single breakend variants in addition to standard SV types"
+                }
+            }
+        },
         "ascat_parameters": {
             "title": "ASCAT parameters",
             "type": "object",
@@ -328,6 +365,10 @@
                 "skip_wakhan": {
                     "type": "boolean",
                     "description": "Skips wakhan"
+                },
+                "skip_savana": {
+                    "type": "boolean",
+                    "description": "Skips SAVANA SV and copy number calling"
                 },
                 "skip_fiber": {
                     "type": "boolean",
@@ -545,6 +586,9 @@
         },
         {
             "$ref": "#/$defs/severus_options"
+        },
+        {
+            "$ref": "#/$defs/savana_options"
         },
         {
             "$ref": "#/$defs/ascat_parameters"

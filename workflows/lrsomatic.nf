@@ -24,6 +24,7 @@ include { NANOPLOT as NANOPLOT_POST         } from '../modules/nf-core/nanoplot/
 include { MOSDEPTH                          } from '../modules/nf-core/mosdepth/main'
 include { ASCAT                             } from '../modules/nf-core/ascat/main'
 include { SEVERUS                           } from '../modules/nf-core/severus/main.nf'
+include { SAVANA                            } from '../modules/local/savana/main'
 include { METAEXTRACT                       } from '../modules/local/metaextract/main'
 include { WAKHAN                            } from '../modules/local/wakhan/main'
 include { FIBERTOOLSRS_PREDICTM6A           } from '../modules/local/fibertoolsrs/predictm6a'
@@ -799,6 +800,82 @@ workflow LRSOMATIC {
     )
 
     ch_versions = ch_versions.mix(SEVERUS.out.versions)
+
+    //
+    // MODULE: SAVANA (label: process_high)
+    // Somatic SV + copy number calling on the haplotagged BAMs.
+    // Paired samples:     `savana` (run -> classify -> cna) with the phased germline VCF as --snp_vcf
+    //                     for heterozygous-SNP allele counting.
+    // Tumour-only samples: `savana to` with the bundled 1000G panel (--g1000_vcf) for allele counting.
+    // Input:  [meta, tumour_bam, tumour_bai, normal_bam, normal_bai, snp_vcf, snp_tbi]
+    //         normal_* and snp_* are [] for tumour-only samples
+    //
+
+    if (!params.skip_savana) {
+
+        // Haplotagged BAMs carry 'type'; strip it so tumour/normal can be joined on the sample key
+        PHASING_HAPLOTYPING.out.tumor_normal_hapbams_ch
+            .map { meta, bam, bai ->
+                def new_meta = meta.subMap('id',
+                                'paired_data',
+                                'platform',
+                                'sex',
+                                'fiber',
+                                'clair3_model',
+                                'clairS_model',
+                                'clairSTO_model',
+                                'kinetics')
+                return [new_meta, meta.type, bam, bai]
+            }
+            .branch { _meta, type, _bam, _bai ->
+                normal: type == 'normal'
+                tumor:  type == 'tumor'
+            }
+            .set { hap_branched }
+        // hap_branched.normal / .tumor: [meta (no type), type, bam, bai]
+
+        hap_branched.normal
+            .map { meta, _type, bam, bai -> [meta, bam, bai] }
+            .set { hap_normal }
+
+        hap_branched.tumor
+            .map { meta, _type, bam, bai -> [meta, bam, bai] }
+            .branch { meta, _bam, _bai ->
+                paired:     meta.paired_data
+                tumor_only: !meta.paired_data
+            }
+            .set { hap_tumor }
+
+        hap_tumor.paired
+            .join(hap_normal)
+            .join(PHASING_HAPLOTYPING.out.phased_germline_vcf)
+            .set { savana_paired_input }
+        // savana_paired_input: [meta, tumour_bam, tumour_bai, normal_bam, normal_bai, phased_germline_vcf, tbi]
+
+        hap_tumor.tumor_only
+            .map { meta, bam, bai -> [meta, bam, bai, [], [], [], []] }
+            .mix(savana_paired_input)
+            .set { savana_input }
+        // savana_input: [meta, tumour_bam, tumour_bai, normal_bam|[], normal_bai|[], snp_vcf|[], snp_tbi|[]]
+
+        // Bundled 1000G panel for tumour-only allele counting; explicit param overrides genome-based default.
+        // '' = none (val inputs cannot be null)
+        def savana_g1000 = params.savana_g1000_vcf ?:
+            (params.genome == 'GRCh38' ? '1000g_hg38' :
+             params.genome == 'CHM13'  ? '1000g_t2t'  : '')
+
+        SAVANA (
+            savana_input,
+            ch_fasta,
+            ch_fai,
+            [[:],
+             params.savana_contigs   ? file(params.savana_contigs,   checkIfExists: true) : [],
+             params.savana_blacklist ? file(params.savana_blacklist, checkIfExists: true) : []],
+            savana_g1000
+        )
+
+        ch_versions = ch_versions.mix(SAVANA.out.versions)
+    }
 
     SEVERUS.out.all_vcf
         .map { meta, vcf ->
