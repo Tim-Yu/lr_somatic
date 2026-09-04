@@ -10,14 +10,12 @@ docker build -f containers/padfoot/Dockerfile -t "$PADFOOT_IMAGE" .
 docker push "$PADFOOT_IMAGE"
 ```
 
-Resolve the pushed image digest and use that immutable reference when starting the pipeline:
+Resolve the pushed digest and pin it in the `container` directive of `modules/local/padfoot/main.nf`, or override per site:
 
-```bash
-nextflow run . -profile singularity \
-  --padfoot_run_repeatmasker \
-  --padfoot_repeatmasker_container <registry>/padfoot-repeatmasker@sha256:<digest>
+```groovy
+process { withName: '.*:PADFOOT_(SEVERUS_WAKHAN|SAVANA)' { container = '<registry>/padfoot-repeatmasker@sha256:<digest>' } }
 ```
 
 The Dockerfile verifies the decompressed Dfam partition checksums. A changed Dfam `current` release therefore fails the build rather than silently changing the annotation database.
 
-This checkout defaults to the pushed digest-pinned image `ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d352ec47cd9fa015f321959dcba7f6c6cd4da05beaea8d811b97dff70f5`, so RepeatMasker runs without adding `--padfoot_run_repeatmasker` when using Docker, Singularity, or Apptainer.
+The module currently pins `ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d352ec47cd9fa015f321959dcba7f6c6cd4da05beaea8d811b97dff70f5`; RepeatMasker runs by default (`--padfoot_run_repeatmasker`).

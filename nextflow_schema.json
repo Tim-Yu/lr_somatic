@@ -304,12 +304,7 @@
                 "padfoot_run_repeatmasker": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Run RepeatMasker on inserted sequences. With Docker/Singularity/Apptainer this uses --padfoot_repeatmasker_container (full Dfam 4.0); with conda it uses the curated Dfam subset bundled with bioconda RepeatMasker."
-                },
-                "padfoot_repeatmasker_container": {
-                    "type": "string",
-                    "default": "ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d352ec47cd9fa015f321959dcba7f6c6cd4da05beaea8d811b97dff70f5",
-                    "description": "Digest-pinned Docker/Singularity image containing Padfoot dependencies, RepeatMasker 4.2.4 and Dfam 4.0."
+                    "description": "Run RepeatMasker on inserted sequences. Containers ship the full Dfam 4.0 database; conda uses the curated Dfam subset bundled with bioconda RepeatMasker."
                 }
             }
         },
@@ -340,11 +335,6 @@
                     "format": "directory-path",
                     "exists": true,
                     "description": "Local checkout of the ReConPlot R package. Overrides --reconplot_pkg_url."
-                },
-                "reconplot_container": {
-                    "type": "string",
-                    "default": "ghcr.io/tim-yu/reconplot:0.2-r4.4",
-                    "description": "Docker/Singularity image with R, the wrapper dependencies and the ReConPlot package. Build recipe: containers/reconplot/Dockerfile"
                 },
                 "reconplot_genome": {
                     "type": "string",

@@ -3,12 +3,9 @@ process PADFOOT {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    // Default image: Seqera Containers build of the core deps (no RepeatMasker/Dfam).
-    // With RepeatMasker enabled, a digest-pinned image bundling RepeatMasker + Dfam 4.0 is used.
-    container "${ params.padfoot_run_repeatmasker ? params.padfoot_repeatmasker_container :
-        (workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/8b/8be44448f145944de5d7397f73e6f6cbbeec3d4f4f593084ea0d0b1fef35b034/data':
-        'community.wave.seqera.io/library/python_numpy_pandas_pysam_pruned:ebcc967fd074604e') }"
+    // Built from containers/padfoot/Dockerfile: Padfoot deps + RepeatMasker 4.2.4 + Dfam 4.0 (Padfoot itself is staged as source).
+    // Override per site with `process { withName: '.*:PADFOOT_(SEVERUS_WAKHAN|SAVANA)' { container = ... } }`.
+    container "ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d352ec47cd9fa015f321959dcba7f6c6cd4da05beaea8d811b97dff70f5"
 
     input:
     tuple val(meta), path(sv_vcf), val(sv_caller), path(cna_file), val(cna_caller)

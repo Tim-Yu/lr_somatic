@@ -3,8 +3,9 @@ process RECONPLOT {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    // Built from containers/reconplot/Dockerfile: R deps + ReConPlot package (not on conda)
-    container "${ params.reconplot_container }"
+    // Built from containers/reconplot/Dockerfile: R deps + ReConPlot package (not on conda; the wrapper is staged as source).
+    // Override per site with `process { withName: '.*:RECONPLOT_(ASCAT_SEVERUS|WAKHAN_SEVERUS|SAVANA)' { container = ... } }`.
+    container "ghcr.io/tim-yu/reconplot@sha256:1145fc5aebe0227bec371f4c59b08b9a09871498e403c01b83f83973149ae9e7"
 
     input:
     // cn_files / sv_files are the caller output files the wrapper's parsers discover by name.
