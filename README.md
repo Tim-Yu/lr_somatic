@@ -54,15 +54,21 @@ b. Phasing and Haplotagging germline SNPs in tumour BAM ([`LongPhase`](https://g
 
 **3) Large variant calling:**
 
-a. Somatic structural variant calling ([`Severus`](https://github.com/KolmogorovLab/Severus))
+a. Somatic structural variant calling ([`Severus`](https://github.com/KolmogorovLab/Severus), [`SAVANA`](https://github.com/cortes-ciriano-lab/savana))
 
-b. Copy number alterion calling; long read version of ([`ASCAT`](https://github.com/VanLoo-lab/ascat))
+b. Copy number alterion calling; long read version of ([`ASCAT`](https://github.com/VanLoo-lab/ascat)), ([`Wakhan`](https://github.com/KolmogorovLab/Wakhan)) and ([`SAVANA`](https://github.com/cortes-ciriano-lab/savana))
 
 **4) Annotation:**
 
 a. Small variant annotation ([`VEP`](https://github.com/Ensembl/ensembl-vep))
 
 b. Structural variant annotation ([`VEP`](https://github.com/Ensembl/ensembl-vep))
+
+c. Somatic SV and CNA functional annotation ([`Padfoot`](https://github.com/KolmogorovLab/Padfoot))
+
+**5) Visualisation:**
+
+a. Rearrangement and copy-number figures per CN/SV caller pair ([`ReConPlot`](https://github.com/cortes-ciriano-lab/ReConPlot))
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
      workflows use the "tube map" design for that. See https://nf-co.re/docs/guidelines/graphic_design/workflow_diagrams#examples for examples.   -->

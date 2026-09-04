@@ -14,11 +14,13 @@ The pipeline produces per-sample output directories. Two modes exist depending o
 
 ```
 ├── Sample ID
-│    ├── ascat
 │    ├── bamfiles
 │    ├── methylation
 │    │    └── tumor
 │    │        └── modkit_pileup
+│    ├── padfoot
+│    │   ├── severus_wakhan
+│    │   └── savana
 │    ├── qc
 │    │    ├── tumor
 │    │    │   ├── cramino_aln
@@ -29,16 +31,16 @@ The pipeline produces per-sample output directories. Two modes exist depending o
 │    │    │   ├── nanoplot_ubam_rep1
 │    │    │   └── samtools
 │    │    └── whatshap_stats
+│    ├── reconplot
+│    │   ├── wakhan_severus
+│    │   └── savana
+│    ├── savana
 │    ├── variants
 │    │   ├── clairsto
 │    │   ├── deepsomatic
 │    │   ├── deepvariant
 │    │   ├── phased
 │    │   └── severus
-│    ├── reconplot
-│    │   ├── ascat_severus
-│    │   ├── wakhan_severus
-│    │   └── savana
 │    ├── vep
 │    │   ├── somatic
 │    │   └── SVs
@@ -56,6 +58,9 @@ The pipeline produces per-sample output directories. Two modes exist depending o
 │    │    │   └── modkit_pileup
 │    │    └── normal
 │    │        └── modkit_pileup
+│    ├── padfoot
+│    │   ├── severus_wakhan
+│    │   └── savana
 │    ├── qc
 │    │    ├── tumor
 │    │    │   ├── cramino_aln
@@ -74,6 +79,11 @@ The pipeline produces per-sample output directories. Two modes exist depending o
 │    │    │   ├── nanoplot_ubam_rep1
 │    │    │   └── samtools
 │    │    └── whatshap_stats
+│    ├── reconplot
+│    │   ├── ascat_severus
+│    │   ├── wakhan_severus
+│    │   └── savana
+│    ├── savana
 │    ├── variants
 │    │   ├── clair3
 │    │   ├── clairs
@@ -89,6 +99,8 @@ The pipeline produces per-sample output directories. Two modes exist depending o
 ├── pipeline_info
 └── multiqc
 ```
+
+The `padfoot`, `reconplot` and `savana` directories are only present when the corresponding step is enabled (`--skip_padfoot`, `--skip_reconplot`, `--skip_savana`). Within them, each caller-pair subdirectory requires both of its callers to have produced output for that sample: `severus_wakhan`/`wakhan_severus` need `--skip_wakhan false`, `ascat_severus` needs `--skip_ascat false` and a matched normal (ASCAT is not run for tumour-only samples), and the `savana` subdirectories additionally need SAVANA copy number, which is only produced when an SNP source is available (the phased germline VCF for paired samples, or the bundled 1000G panel for tumour-only samples on GRCh38/CHM13).
 
 ### `ascat`
 
@@ -461,20 +473,20 @@ Phased variant calls produced by Longphase. Present in all samples.
 │   └── {binsize}kbp_bin_ref_all_sample_with_SV_breakpoints.bed
 ```
 
-| File                                          | Description                                                                              |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `sample.sv_breakpoints.vcf.gz`                | All raw SV breakpoints (two records per breakpoint, one per breakend)                    |
-| `sample.classified.vcf.gz`                    | All breakpoints annotated with the classifier decision (`CLASS` in INFO)                 |
-| `sample.classified.somatic.vcf.gz`            | PASS somatic SVs                                                                         |
-| `sample.classified.somatic.bedpe`             | PASS somatic SVs in BEDPE format                                                         |
-| `sample.sv_breakpoints_read_support.tsv`      | Tumour/normal supporting read IDs per variant                                            |
-| `sample.inserted_sequences.fa`                | Inserted sequences supporting insertion calls                                            |
-| `sample.contigs.txt`                          | Contigs analysed                                                                         |
-| `sample_allele_counts_hetSNPs.bed`            | Allele counts at heterozygous SNPs (from the phased germline VCF, or 1000G panel)        |
-| `sample_read_counts_*_log2r_segmented.tsv`    | Segmented log2 ratio relative copy number (`mnorm` = normalised to matched normal)       |
-| `sample_fitted_purity_ploidy.tsv`             | Selected purity/ploidy fit                                                               |
-| `sample_ranked_solutions.tsv`                 | All viable purity/ploidy solutions                                                       |
-| `sample_segmented_absolute_copy_number.tsv`   | Segmented allele-specific absolute copy number (input for ReConPlot)                     |
+| File                                        | Description                                                                        |
+| ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `sample.sv_breakpoints.vcf.gz`              | All raw SV breakpoints (two records per breakpoint, one per breakend)              |
+| `sample.classified.vcf.gz`                  | All breakpoints annotated with the classifier decision (`CLASS` in INFO)           |
+| `sample.classified.somatic.vcf.gz`          | PASS somatic SVs                                                                   |
+| `sample.classified.somatic.bedpe`           | PASS somatic SVs in BEDPE format                                                   |
+| `sample.sv_breakpoints_read_support.tsv`    | Tumour/normal supporting read IDs per variant                                      |
+| `sample.inserted_sequences.fa`              | Inserted sequences supporting insertion calls                                      |
+| `sample.contigs.txt`                        | Contigs analysed                                                                   |
+| `sample_allele_counts_hetSNPs.bed`          | Allele counts at heterozygous SNPs (from the phased germline VCF, or 1000G panel)  |
+| `sample_read_counts_*_log2r_segmented.tsv`  | Segmented log2 ratio relative copy number (`mnorm` = normalised to matched normal) |
+| `sample_fitted_purity_ploidy.tsv`           | Selected purity/ploidy fit                                                         |
+| `sample_ranked_solutions.tsv`               | All viable purity/ploidy solutions                                                 |
+| `sample_segmented_absolute_copy_number.tsv` | Segmented allele-specific absolute copy number (input for ReConPlot)               |
 
 </details>
 
@@ -525,14 +537,14 @@ Phased variant calls produced by Longphase. Present in all samples.
 │       └── (same layout)
 ```
 
-| File                     | Description                                                                                          |
-| ------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `per_chromosome/*`       | One ReConPlot figure per chromosome: copy number (total + minor allele) with SV arcs coloured by type |
-| `genome_wide/*`          | All chromosomes side by side in one strip                                                            |
-| `focus/*`                | Multi-panel figure for `--reconplot_regions`, with gene labels / BAF track if requested (optional)    |
-| `sample.reconplot_cn.tsv`| Harmonised CN table (`chr,start,end,copyNumber,minorAlleleCopyNumber`) as passed to ReConPlot        |
-| `sample.reconplot_sv.tsv`| Harmonised SV table (`chr1,pos1,chr2,pos2,strands`) as passed to ReConPlot                            |
-| `reconplot.log`          | Wrapper log (parser choices, purity/ploidy read, filters applied)                                    |
+| File                      | Description                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `per_chromosome/*`        | One ReConPlot figure per chromosome: copy number (total + minor allele) with SV arcs coloured by type |
+| `genome_wide/*`           | All chromosomes side by side in one strip                                                             |
+| `focus/*`                 | Multi-panel figure for `--reconplot_regions`, with gene labels / BAF track if requested (optional)    |
+| `sample.reconplot_cn.tsv` | Harmonised CN table (`chr,start,end,copyNumber,minorAlleleCopyNumber`) as passed to ReConPlot         |
+| `sample.reconplot_sv.tsv` | Harmonised SV table (`chr1,pos1,chr2,pos2,strands`) as passed to ReConPlot                            |
+| `reconplot.log`           | Wrapper log (parser choices, purity/ploidy read, filters applied)                                     |
 
 `ascat_severus/` and `wakhan_severus/` pair Severus somatic SVs with ASCAT or the top-ranked Wakhan copy-number solution; `savana/` uses SAVANA's own SVs and absolute copy number. A pair is only produced when both callers ran for the sample.
 

@@ -218,18 +218,19 @@ For structural variants, the CHM13 panel of normals is a merged panel combining 
 | Parameter         | Description                                                                                             |
 | ----------------- | ------------------------------------------------------------------------------------------------------- |
 | `--wakhan_chroms` | A string specifying a subset of chromosomes for WAKHAN to process, e.g. `"chr1,chr2"`. Default = `null` |
+
 #### SAVANA Options
 
 SAVANA is run on the haplotagged BAMs. For paired samples the full `savana` workflow (SV calling -> classification -> copy number) is run, using the pipeline's phased germline VCF as the SNP source for heterozygous-SNP allele counting. For tumour-only samples `savana to` is run and the SAVANA-bundled 1000G panel is used for allele counting.
 
-| Parameter             | Description                                                                                                                                                       |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--savana_minsupport` | Minimum supporting reads for a PASS SV. Default = `null` (tool default: 3 for ONT, 7 for PacBio)                                                                  |
-| `--savana_contigs`    | Text file with one contig per line to restrict analysis. Default = `null` (canonical chromosomes inferred from the reference `.fai`; chrY dropped for females)   |
-| `--savana_blacklist`  | BED file of regions excluded from copy number read counting. Default = `null`                                                                                     |
-| `--savana_g1000_vcf`  | Bundled 1000G panel for tumour-only allele counting: `1000g_hg38`, `1000g_t2t` or `1000g_hg19`. Default = `null` (inferred from `--genome`)                       |
-| `--savana_cn_binsize` | Copy number bin size in kbp. Default = `null` (tool default: 10)                                                                                                  |
-| `--savana_single_bnd` | Report single breakend variants in addition to standard SV types. Default = `false`                                                                              |
+| Parameter             | Description                                                                                                                                                    |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--savana_minsupport` | Minimum supporting reads for a PASS SV. Default = `null` (tool default: 3 for ONT, 7 for PacBio)                                                               |
+| `--savana_contigs`    | Text file with one contig per line to restrict analysis. Default = `null` (canonical chromosomes inferred from the reference `.fai`; chrY dropped for females) |
+| `--savana_blacklist`  | BED file of regions excluded from copy number read counting. Default = `null`                                                                                  |
+| `--savana_g1000_vcf`  | Bundled 1000G panel for tumour-only allele counting: `1000g_hg38`, `1000g_t2t` or `1000g_hg19`. Default = `null` (inferred from `--genome`)                    |
+| `--savana_cn_binsize` | Copy number bin size in kbp. Default = `null` (tool default: 10)                                                                                               |
+| `--savana_single_bnd` | Report single breakend variants in addition to standard SV types. Default = `false`                                                                            |
 
 #### Padfoot Options
 
@@ -240,19 +241,19 @@ SAVANA is run on the haplotagged BAMs. For paired samples the full `savana` work
 
 Padfoot is not distributed on bioconda. The pipeline downloads the source tree from `--padfoot_url` (GitHub archive, once per run) and runs it inside a container / conda environment that provides its dependencies (python, pysam, pandas, biopython, samtools, minimap2, bedtools). On systems without internet access on compute nodes, clone Padfoot once and pass the checkout with `--padfoot_dir`.
 
-RepeatMasker (used only to classify the sequence of novel insertions) runs by default. Under Docker/Singularity/Apptainer it runs from a dedicated public image (`ghcr.io/tim-yu/padfoot-repeatmasker`) with the full Dfam 4.0 database baked in. Under `-profile conda` it uses the small curated Dfam subset bundled with bioconda RepeatMasker (sufficient for common human repeats such as Alu/L1/SVA). Use `--padfoot_run_repeatmasker false` to disable it; all other Padfoot annotations are unaffected.
+RepeatMasker (used only to classify the sequence of novel insertions) runs by default. Under Docker/Singularity/Apptainer the module image (`ghcr.io/tim-yu/padfoot-repeatmasker`, recipe in `containers/padfoot/`) ships the full Dfam 4.0 database. Under `-profile conda` it uses the small curated Dfam subset bundled with bioconda RepeatMasker (sufficient for common human repeats such as Alu/L1/SVA). Use `--padfoot_run_repeatmasker false` to disable it; all other Padfoot annotations are unaffected.
 
 Padfoot bundles gene and repeat annotations for `hg38` and `mm10` only. For other genomes (e.g. CHM13) provide `--padfoot_gff` and `--padfoot_rm`, otherwise Padfoot is skipped with a warning.
 
-| Parameter                    | Description                                                                                                                                                                  |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--padfoot_url`              | URL of a Padfoot source tarball (GitHub archive). Default = pinned commit of `Tim-Yu/Padfoot` with Savana support                                                             |
-| `--padfoot_dir`              | Local Padfoot checkout (directory with `padfoot.py` and `beds/`); overrides `--padfoot_url`. Default = `null`                                                                 |
-| `--padfoot_genome`           | Padfoot genome preset (`hg38`, `chm13`, `mm10`). Default = `null` (inferred from `--genome`)                                                                                  |
-| `--padfoot_gff`              | Custom GFF3 gene annotation. Default = `null` (bundled)                                                                                                                       |
-| `--padfoot_rm`               | Custom RepeatMasker annotation. Default = `null` (bundled)                                                                                                                    |
-| `--padfoot_run_repeatmasker` | Run RepeatMasker on inserted sequences (repeat class of novel insertions). Containers use `--padfoot_repeatmasker_container` (full Dfam 4.0); conda uses the curated Dfam subset bundled with bioconda RepeatMasker. Default = `true` |
-| `--padfoot_repeatmasker_container` | Digest-pinned image with Padfoot dependencies + RepeatMasker 4.2.4 + Dfam 4.0. Default = `ghcr.io/tim-yu/padfoot-repeatmasker@sha256:f98b0d35...` |
+| Parameter                    | Description                                                                                                                                                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--padfoot_url`              | URL of a Padfoot source tarball (GitHub archive). Default = pinned commit of `Tim-Yu/Padfoot` with Savana support                                                                                              |
+| `--padfoot_dir`              | Local Padfoot checkout (directory with `padfoot.py` and `beds/`); overrides `--padfoot_url`. Default = `null`                                                                                                  |
+| `--padfoot_genome`           | Padfoot genome preset (`hg38`, `chm13`, `mm10`). Default = `null` (inferred from `--genome`)                                                                                                                   |
+| `--padfoot_gff`              | Custom GFF3 gene annotation. Default = `null` (bundled)                                                                                                                                                        |
+| `--padfoot_rm`               | Custom RepeatMasker annotation. Default = `null` (bundled)                                                                                                                                                     |
+| `--padfoot_run_repeatmasker` | Run RepeatMasker on inserted sequences (repeat class of novel insertions). Containers ship the full Dfam 4.0 database; conda uses the curated Dfam subset bundled with bioconda RepeatMasker. Default = `true` |
+
 #### ReConPlot Options
 
 [ReConPlot](https://github.com/cortes-ciriano-lab/ReConPlot) rearrangement + copy-number figures are generated through the [Tim-Yu/ReConPlot](https://github.com/Tim-Yu/ReConPlot) wrapper for every CN/SV caller pair available for a sample, into `reconplot/<pair>/`:
@@ -263,21 +264,33 @@ Padfoot bundles gene and repeat annotations for `hg38` and `mm10` only. For othe
 
 Each pair produces `per_chromosome/` (one figure per chromosome), `genome_wide/` (all chromosomes in one strip), the harmonised CN/SV tables, and, when `--reconplot_regions` is set, a `focus/` multi-panel figure with optional gene labels and BAF track. Both the wrapper and the ReConPlot R package (neither on conda) are staged as source from GitHub (or local checkouts for offline systems); the default container ships the package pre-installed, while `-profile conda` installs it at run time.
 
-| Parameter                 | Description                                                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `--reconplot_url`         | Wrapper source tarball (GitHub archive). Default = pinned commit of `Tim-Yu/ReConPlot`                                          |
-| `--reconplot_dir`         | Local wrapper checkout (contains `run_reconplot.R`); overrides `--reconplot_url`. Default = `null`                              |
-| `--reconplot_pkg_url`     | ReConPlot R package source tarball. Default = pinned commit of `cortes-ciriano-lab/ReConPlot`                                    |
-| `--reconplot_pkg_dir`     | Local ReConPlot package checkout; overrides `--reconplot_pkg_url`. Default = `null`                                              |
-| `--reconplot_container`   | Digest-pinned image with R deps + ReConPlot (built from `containers/reconplot/Dockerfile`). Default = `ghcr.io/tim-yu/reconplot` |
-| `--reconplot_genome`      | ReConPlot genome preset (`hg38`, `hg19`, `T2T`, `mm10`, `mm39`). Default = `null` (inferred from `--genome`)                      |
-| `--reconplot_max_cn`      | Copy-number axis ceiling. Default = `8`                                                                                          |
-| `--reconplot_min_svlen`   | Drop intra-chromosomal SVs shorter than this (bp); translocations kept. Default = `0`                                            |
-| `--reconplot_exclude_vntr`| Drop Severus SVs flagged inside a VNTR. Default = `false`                                                                        |
-| `--reconplot_regions`     | Regions for an extra `focus/` panel, e.g. `"chr8,chr17:30000000-50000000"`. Default = `null` (no focus panel)                    |
-| `--reconplot_genes`       | Comma-separated HUGO symbols labelled on the focus panel. Default = `null`                                                       |
-| `--reconplot_baf_track`   | Add a het-SNP BAF track to the focus panel (ASCAT and SAVANA only). Default = `false`                                            |
-| `--reconplot_format`      | Output formats: `pdf`, `png` or `pdf,png`. Default = `pdf,png`                                                                   |
+| Parameter                  | Description                                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `--reconplot_url`          | Wrapper source tarball (GitHub archive). Default = pinned commit of `Tim-Yu/ReConPlot`                        |
+| `--reconplot_dir`          | Local wrapper checkout (contains `run_reconplot.R`); overrides `--reconplot_url`. Default = `null`            |
+| `--reconplot_pkg_url`      | ReConPlot R package source tarball. Default = pinned commit of `cortes-ciriano-lab/ReConPlot`                 |
+| `--reconplot_pkg_dir`      | Local ReConPlot package checkout; overrides `--reconplot_pkg_url`. Default = `null`                           |
+| `--reconplot_genome`       | ReConPlot genome preset (`hg38`, `hg19`, `T2T`, `mm10`, `mm39`). Default = `null` (inferred from `--genome`)  |
+| `--reconplot_max_cn`       | Copy-number axis ceiling. Default = `8`                                                                       |
+| `--reconplot_min_svlen`    | Drop intra-chromosomal SVs shorter than this (bp); translocations kept. Default = `0`                         |
+| `--reconplot_exclude_vntr` | Drop Severus SVs flagged inside a VNTR. Default = `false`                                                     |
+| `--reconplot_regions`      | Regions for an extra `focus/` panel, e.g. `"chr8,chr17:30000000-50000000"`. Default = `null` (no focus panel) |
+| `--reconplot_genes`        | Comma-separated HUGO symbols labelled on the focus panel. Default = `null`                                    |
+| `--reconplot_baf_track`    | Add a het-SNP BAF track to the focus panel (ASCAT and SAVANA only). Default = `false`                         |
+| `--reconplot_format`       | Output formats: `pdf`, `png` or `pdf,png`. Default = `pdf,png`                                                |
+
+##### Offline and air-gapped systems
+
+Both images are pinned by digest directly in the module `container` directives, so `nf-core pipelines download --container-system singularity` stages them like every other container in the pipeline. To use a different image (e.g. a local mirror) override it in a config file:
+
+```groovy
+process {
+    withName: '.*:PADFOOT_(SEVERUS_WAKHAN|SAVANA)' { container = '/path/to/padfoot-repeatmasker.sif' }
+    withName: '.*:RECONPLOT_(ASCAT_SEVERUS|WAKHAN_SEVERUS|SAVANA)' { container = '/path/to/reconplot.sif' }
+}
+```
+
+The Padfoot and ReConPlot **source trees** are downloaded from GitHub at run time; use `--padfoot_dir`, `--reconplot_dir` and `--reconplot_pkg_dir` to point at local checkouts instead.
 
 #### Variant Filtering and Combining Options
 
