@@ -27,3 +27,9 @@ pipeline_info/*.{html,json,txt,yml}
 */qc/{tumor,normal}/mosdepth/*.txt
 */variants/deepsomatic/*.{vcf.gz,vcf.gz.tbi}
 */variants/deepvariant/*.{vcf.gz,vcf.gz.tbi}
+*/savana/*.{vcf.gz,vcf.gz.tbi}
+*/savana/*_ranked_solutions.tsv
+*/savana/*_fitted_purity_ploidy.tsv
+*/padfoot/*/padfoot.log
+*/reconplot/*/reconplot.log
+*/reconplot/*/{per_chromosome,genome_wide,focus}/*.{pdf,png}
