@@ -15,4 +15,4 @@ dependencies:
   - "conda-forge::r-dplyr=1.2.1"
   - "conda-forge::r-scales=1.4.0"
   - "conda-forge::r-magrittr=2.0.5"
-  - "conda-forge::procps-ng"  # `ps` required by Nextflow task metrics
+  - "conda-forge::procps-ng" # `ps` required by Nextflow task metrics

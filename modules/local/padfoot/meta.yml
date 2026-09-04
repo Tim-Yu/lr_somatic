@@ -15,6 +15,7 @@ tools:
       documentation: "https://github.com/KolmogorovLab/Padfoot"
       tool_dev_url: "https://github.com/Tim-Yu/Padfoot"
       licence: ["BSD-3-Clause"]
+      identifier: ""
 
 input:
   - - meta:

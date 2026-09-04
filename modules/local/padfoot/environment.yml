@@ -15,4 +15,4 @@ dependencies:
   - "bioconda::minimap2=2.30"
   - "bioconda::bedtools=2.31.1"
   - "bioconda::repeatmasker=4.2.4"
-  - "conda-forge::procps-ng"  # `ps` required by Nextflow task metrics
+  - "conda-forge::procps-ng" # `ps` required by Nextflow task metrics

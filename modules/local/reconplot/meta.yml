@@ -16,6 +16,7 @@ tools:
       tool_dev_url: "https://github.com/cortes-ciriano-lab/ReConPlot"
       doi: "10.1093/bioinformatics/btad719"
       licence: ["MIT"]
+      identifier: ""
 
 input:
   - - meta:
