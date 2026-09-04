@@ -1072,16 +1072,8 @@ workflow LRSOMATIC {
 
     def padfoot_genome = params.padfoot_genome ?:
         (params.genome == 'GRCh38' ? 'hg38' : params.genome == 'CHM13' ? 'chm13' : null)
-    // Padfoot only bundles hg38/mm10 annotations
+    // Padfoot only bundles hg38/mm10 annotations; unsupported genomes are reported by validateInputParameters()
     def padfoot_annot_ok = padfoot_genome && ((padfoot_genome in ['hg38', 'mm10']) || (params.padfoot_gff && params.padfoot_rm))
-    if (!params.skip_padfoot && !padfoot_annot_ok) {
-        log.warn "Padfoot skipped: no annotations for genome '${params.genome}' (padfoot_genome=${padfoot_genome}). " +
-                 "Set --padfoot_genome hg38|mm10, or provide --padfoot_gff and --padfoot_rm."
-    }
-    if (!params.skip_padfoot && params.padfoot_run_repeatmasker && !params.padfoot_repeatmasker_container) {
-        error "Padfoot RepeatMasker is enabled but no --padfoot_repeatmasker_container was supplied. " +
-              "Provide a digest-pinned image that contains RepeatMasker and Dfam."
-    }
 
     if (!params.skip_padfoot && padfoot_annot_ok) {
 
@@ -1164,10 +1156,7 @@ workflow LRSOMATIC {
     if (!params.skip_reconplot) {
 
         def reconplot_genome = params.reconplot_genome ?:
-            (params.genome == 'GRCh38' ? 'hg38' : params.genome == 'CHM13' ? 'T2T' : 'hg38')
-        if (!params.reconplot_genome && !(params.genome in ['GRCh38', 'CHM13'])) {
-            log.warn "ReConPlot: genome '${params.genome}' not recognised; using hg38 gene/chromosome annotations. Set --reconplot_genome to override."
-        }
+            (params.genome == 'CHM13' ? 'T2T' : 'hg38')
 
         if (params.reconplot_dir) {
             reconplot_src = channel.value([[id: 'reconplot'], file(params.reconplot_dir, type: 'dir', checkIfExists: true)])
@@ -1176,6 +1165,7 @@ workflow LRSOMATIC {
             RECONPLOT_WGET( channel.value([[id: 'reconplot'], params.reconplot_url]) )
             RECONPLOT_UNTAR( RECONPLOT_WGET.out.outfile )
             reconplot_src = RECONPLOT_UNTAR.out.untar
+            ch_versions = ch_versions.mix(RECONPLOT_WGET.out.versions)
         }
         if (params.reconplot_pkg_dir) {
             reconplot_pkg = channel.value([[id: 'reconplot_pkg'], file(params.reconplot_pkg_dir, type: 'dir', checkIfExists: true)])
@@ -1184,6 +1174,7 @@ workflow LRSOMATIC {
             RECONPLOT_PKG_WGET( channel.value([[id: 'reconplot_pkg'], params.reconplot_pkg_url]) )
             RECONPLOT_PKG_UNTAR( RECONPLOT_PKG_WGET.out.outfile )
             reconplot_pkg = RECONPLOT_PKG_UNTAR.out.untar
+            ch_versions = ch_versions.mix(RECONPLOT_PKG_WGET.out.versions)
         }
         // reconplot_src: [meta, dir]  -- wrapper (run_reconplot.R + R/)
         // reconplot_pkg: [meta, dir]  -- ReConPlot R package source
@@ -1212,9 +1203,9 @@ workflow LRSOMATIC {
             WAKHAN.out.bed_files
                 .map { meta, beds ->
                     def files = [beds].flatten()
-                    def hp = files.findAll { it.name ==~ /.*_copynumbers_segments_HP_[12]\.bed/ }
-                    def best = hp.findAll { it.toString().contains('/solution_1/') } ?: hp
-                    return [meta, best.unique { it.name }]
+                    def hp = files.findAll { bed -> bed.name ==~ /.*_copynumbers_segments_HP_[12]\.bed/ }
+                    def best = hp.findAll { bed -> bed.toString().contains('/solution_1/') } ?: hp
+                    return [meta, best.unique { bed -> bed.name }]
                 }
                 .filter { _meta, beds -> beds.size() == 2 }
                 .join(WAKHAN.out.solutions_ranks)
@@ -1235,7 +1226,7 @@ workflow LRSOMATIC {
                 .join(SAVANA.out.somatic_bedpe)
                 .join(SAVANA.out.fitted_purity_ploidy)
                 .join(SAVANA.out.allele_counts, remainder: true)
-                .map { meta, cna, bedpe, pp, hetsnp -> [meta, 'savana', [cna, bedpe, pp, hetsnp].findAll { it != null }, 'savana', []] }
+                .map { meta, cna, bedpe, pp, hetsnp -> [meta, 'savana', [cna, bedpe, pp, hetsnp].findAll { f -> f != null }, 'savana', []] }
                 .set { reconplot_savana_input }
             // reconplot_savana_input: [meta, 'savana', [segmented_absolute_copy_number.tsv, classified.somatic.bedpe, fitted_purity_ploidy.tsv, allele_counts_hetSNPs.bed], 'savana', []]
 
