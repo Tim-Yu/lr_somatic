@@ -223,14 +223,14 @@ For structural variants, the CHM13 panel of normals is a merged panel combining 
 
 SAVANA is run on the haplotagged BAMs. For paired samples the full `savana` workflow (SV calling -> classification -> copy number) is run, using the pipeline's phased germline VCF as the SNP source for heterozygous-SNP allele counting. For tumour-only samples `savana to` is run and the SAVANA-bundled 1000G panel is used for allele counting.
 
-| Parameter             | Description                                                                                                                                                    |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--savana_minsupport` | Minimum supporting reads for a PASS SV. Default = `null` (tool default: 3 for ONT, 7 for PacBio)                                                               |
-| `--savana_contigs`    | Text file with one contig per line to restrict analysis. Default = `null` (canonical chromosomes inferred from the reference `.fai`; chrY dropped for females) |
-| `--savana_blacklist`  | BED file of regions excluded from copy number read counting. Default = `null`                                                                                  |
-| `--savana_g1000_vcf`  | Bundled 1000G panel for tumour-only allele counting: `1000g_hg38`, `1000g_t2t` or `1000g_hg19`. Default = `null` (inferred from `--genome`)                    |
-| `--savana_cn_binsize` | Copy number bin size in kbp. Default = `null` (tool default: 10)                                                                                               |
-| `--savana_single_bnd` | Report single breakend variants in addition to standard SV types. Default = `false`                                                                            |
+| Parameter             | Description                                                                                                                                                                      |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--savana_minsupport` | Minimum supporting reads for a PASS SV. Default = `null` (tool default: 3 for ONT, 7 for PacBio)                                                                                 |
+| `--savana_contigs`    | Text file with one contig per line to restrict SV calling and copy number. Default = `null` (canonical chromosomes inferred from the reference `.fai`; chrY dropped for females) |
+| `--savana_blacklist`  | BED file of regions excluded from copy number read counting. Default = `null`                                                                                                    |
+| `--savana_g1000_vcf`  | Bundled 1000G panel for tumour-only allele counting: `1000g_hg38`, `1000g_t2t` or `1000g_hg19`. Default = `null` (inferred from `--genome`)                                      |
+| `--savana_cn_binsize` | Copy number bin size in kbp. Default = `null` (tool default: 10)                                                                                                                 |
+| `--savana_single_bnd` | Report single breakend variants in addition to standard SV types. Default = `false`                                                                                              |
 
 #### Padfoot Options
 

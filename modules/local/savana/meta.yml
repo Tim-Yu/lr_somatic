@@ -66,7 +66,7 @@ input:
         description: Groovy Map for auxiliary files
     - contigs:
         type: file
-        description: Text file with one contig per line to restrict analysis (optional; canonical chromosomes inferred from fai when absent)
+        description: Text file with one contig per line to restrict SV calling and copy number (optional; canonical chromosomes inferred from fai when absent)
         pattern: "*.txt"
     - blacklist:
         type: file

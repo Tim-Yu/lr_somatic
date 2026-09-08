@@ -470,7 +470,7 @@ Phased variant calls produced by Longphase. Present in all samples.
 │   ├── sample_ranked_solutions.tsv
 │   ├── sample_fitted_purity_ploidy.tsv
 │   ├── sample_segmented_absolute_copy_number.tsv
-│   └── {binsize}kbp_bin_ref_all_sample_with_SV_breakpoints.bed
+│   └── {binsize}kbp_bin_ref_subset_sample_with_SV_breakpoints.bed
 ```
 
 | File                                        | Description                                                                        |

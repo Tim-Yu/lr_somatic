@@ -244,7 +244,7 @@
                     "type": "string",
                     "format": "file-path",
                     "exists": true,
-                    "description": "Text file listing contigs (one per line) to analyse. Default: canonical chromosomes inferred from the reference fai (chrY dropped for female samples)"
+                    "description": "Text file listing contigs (one per line) to analyse; restricts both SV calling and copy number (canonical contigs only for the latter). Default: canonical chromosomes inferred from the reference fai (chrY dropped for female samples)"
                 },
                 "savana_blacklist": {
                     "type": "string",

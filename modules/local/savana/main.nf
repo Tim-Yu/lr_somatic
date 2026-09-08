@@ -63,12 +63,17 @@ process SAVANA {
     """
     ${contigs_cmd}
 
+    # SAVANA's copy-number step ignores --contigs and defaults to chr1-22,X,Y (KeyError on references that
+    # lack any of them). Give it the canonical subset of the same contigs as chromosome numbers (X=23, Y=24).
+    cna_chroms=\$(sed -E 's/^chr//' ${prefix}.contigs.txt | awk '\$1 ~ /^([0-9]+|X|Y)\$/ { sub(/^X\$/, "23"); sub(/^Y\$/, "24"); printf "%s ", \$1 }')
+
     savana ${subcommand} \\
         --tumour ${tumour_bam} \\
         ${normal_arg} \\
         --ref ${fasta} \\
         --ref_index ${fai} \\
         --contigs ${prefix}.contigs.txt \\
+        \${cna_chroms:+--chromosomes \$cna_chroms} \\
         --outdir savana_out \\
         --tmpdir savana_tmp \\
         --sample ${prefix} \\
