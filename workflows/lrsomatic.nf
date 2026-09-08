@@ -1222,10 +1222,13 @@ workflow LRSOMATIC {
         if (!params.skip_savana) {
             // Single-source mode: all SAVANA files in cn_files, sv_files empty.
             // allele_counts is optional (absent without an SNP source), so join with remainder and drop nulls.
+            // A sample with allele counts but no CN fit (SAVANA "No_fit_found") only exists on the right-hand
+            // side and surfaces as [meta, null, bed]; there is nothing to plot for it, so drop it before the map.
             SAVANA.out.cna
                 .join(SAVANA.out.somatic_bedpe)
                 .join(SAVANA.out.fitted_purity_ploidy)
                 .join(SAVANA.out.allele_counts, remainder: true)
+                .filter { row -> row[1] != null }
                 .map { meta, cna, bedpe, pp, hetsnp -> [meta, 'savana', [cna, bedpe, pp, hetsnp].findAll { f -> f != null }, 'savana', []] }
                 .set { reconplot_savana_input }
             // reconplot_savana_input: [meta, 'savana', [segmented_absolute_copy_number.tsv, classified.somatic.bedpe, fitted_purity_ploidy.tsv, allele_counts_hetSNPs.bed], 'savana', []]
