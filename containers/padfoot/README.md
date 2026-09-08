@@ -1,6 +1,6 @@
 # Padfoot RepeatMasker image
 
-This image is only required when `--padfoot_run_repeatmasker` is enabled. It embeds the Dfam 4.0 root and curated-consensus FamDB partitions, configures FamDB at build time, and validates human RepeatMasker during the build.
+This is the image the `PADFOOT` module runs in (pinned by digest in `modules/local/padfoot/main.nf`). It embeds the Dfam 4.0 root and curated-consensus FamDB partitions, configures FamDB at build time, and validates human RepeatMasker during the build.
 
 Build and publish from the pipeline root:
 

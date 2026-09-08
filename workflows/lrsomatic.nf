@@ -1101,8 +1101,8 @@ workflow LRSOMATIC {
             WAKHAN.out.vcf_files
                 .map { meta, vcfs ->
                     def files = [vcfs].flatten()
-                    def integers = files.findAll { it.name.endsWith('_wakhan_cna_integers.vcf') }
-                    def best = integers.find { it.toString().contains('/solution_1/') } ?: integers[0]
+                    def integers = files.findAll { vcf -> vcf.name.endsWith('_wakhan_cna_integers.vcf') }
+                    def best = integers.find { vcf -> vcf.toString().contains('/solution_1/') } ?: integers[0]
                     return [meta, best]
                 }
                 .filter { _meta, vcf -> vcf != null }
@@ -1187,8 +1187,9 @@ workflow LRSOMATIC {
             ASCAT.out.segments
                 .join(ASCAT.out.purityploidy)
                 .join(ASCAT.out.bafs)
-                // *segments.txt glob also matches *segments_raw.txt; the wrapper needs the fitted segments only
-                .map { meta, seg, pp, bafs -> [meta, ([seg].flatten().findAll { !it.name.endsWith('segments_raw.txt') } + [pp, bafs]).flatten()] }
+                // segments = fitted segments.txt (segments_raw.txt is a separate emit); bafs = every *BAF.txt,
+                // the wrapper picks <sample>.tumour_tumourBAF.txt by name
+                .map { meta, seg, pp, bafs -> [meta, [seg, pp, bafs].flatten()] }
                 .join(severus_sv_files)
                 .map { meta, cn, sv -> [meta, 'ascat', cn, 'severus', sv] }
                 .set { reconplot_ascat_input }

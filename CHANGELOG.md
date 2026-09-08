@@ -8,16 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added`
 
 - Added SAVANA module for somatic SV and copy number calling on haplotagged BAMs (paired: `savana` with phased germline VCF as SNP source; tumour-only: `savana to` with bundled 1000G panel). New params `skip_savana`, `savana_minsupport`, `savana_contigs`, `savana_blacklist`, `savana_g1000_vcf`, `savana_cn_binsize`, `savana_single_bnd` (@Tim-Yu).
-- Added Padfoot annotation of somatic SVs + CNAs for both Severus/Wakhan and SAVANA outputs (paired and tumour-only). Padfoot source is fetched from GitHub (or `--padfoot_dir`) and run in a Seqera Containers image / conda env of its dependencies. RepeatMasker annotation of inserted sequences runs by default under Docker/Singularity via a public image bundling RepeatMasker 4.2.4 + Dfam 4.0 (`ghcr.io/tim-yu/padfoot-repeatmasker`). New params `skip_padfoot`, `padfoot_url`, `padfoot_dir`, `padfoot_genome`, `padfoot_gff`, `padfoot_rm`, `padfoot_run_repeatmasker` (@Tim-Yu).
+- Added Padfoot annotation of somatic SVs + CNAs for both Severus/Wakhan and SAVANA outputs (paired and tumour-only). Padfoot source is fetched from GitHub (or `--padfoot_dir`) and run in a public image bundling its dependencies with RepeatMasker 4.2.4 + Dfam 4.0 (`ghcr.io/tim-yu/padfoot-repeatmasker`, recipe in `containers/padfoot/`) or in a conda env; RepeatMasker annotation of inserted sequences runs by default. New params `skip_padfoot`, `padfoot_url`, `padfoot_dir`, `padfoot_genome`, `padfoot_gff`, `padfoot_rm`, `padfoot_run_repeatmasker` (@Tim-Yu).
 - Added ReConPlot rearrangement + copy-number figures for each available CN/SV caller pair (`reconplot/{ascat_severus,wakhan_severus,savana}/`): per-chromosome, genome-wide and optional region-focus panels. Wrapper (`Tim-Yu/ReConPlot`) and ReConPlot R package are staged from GitHub or local checkouts; runs in a public image (`ghcr.io/tim-yu/reconplot`, recipe in `containers/reconplot/`) or conda. New params `skip_reconplot`, `reconplot_url`, `reconplot_dir`, `reconplot_pkg_url`, `reconplot_pkg_dir`, `reconplot_genome`, `reconplot_max_cn`, `reconplot_min_svlen`, `reconplot_exclude_vntr`, `reconplot_regions`, `reconplot_genes`, `reconplot_baf_track`, `reconplot_format` (@Tim-Yu).
 
 ### `Changed`
 
-- [#184](https://github.com/IntGenomicsLab/lrsomatic/pull/184) - Replaced the CHM13 Severus panel of normals with the merged 1000 Genomes + ASAP panel (@AmberVerhasselt).
-
 ### `Fixed`
-
-- [#182](https://github.com/IntGenomicsLab/lrsomatic/pull/182) - Added `--vcf` to the default `vep_args` so VEP writes VCF output rather than its default tab-delimited format (@AmberVerhasselt).
 
 ## v1.1.0 - [2026-04-28]
 
