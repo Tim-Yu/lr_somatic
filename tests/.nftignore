@@ -28,3 +28,6 @@ pipeline_info/*.{html,json,txt,yml}
 */variants/deepsomatic/*.{vcf.gz,vcf.gz.tbi}
 */variants/deepvariant/*.{vcf.gz,vcf.gz.tbi}
 */variants/savana/*
+*/padfoot/*/padfoot.log
+*/reconplot/*/reconplot.log
+*/reconplot/*/{per_chromosome,genome_wide,focus}/*.{pdf,png}
